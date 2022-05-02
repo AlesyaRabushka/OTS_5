@@ -67,12 +67,6 @@ class Graph:
             #     little_list2.append(vertex1)
             #     self.list[vertex2] = little_list2
 
-
-
-
-
-
-
     # add EDGE from vertex1 to vertex2
     def add_oriented_e(self, vertex1, vertex2):
         # v1 -> v2
