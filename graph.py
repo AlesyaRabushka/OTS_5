@@ -2,8 +2,13 @@ class Graph:
     def __init__(self, name):
         self.name = name
         self.list = {}
+        self.e_list = {}
         self.v_list = []
-        self.e_list = []
+
+
+        self.e_oriented_list = []
+        self.e_not_oriented_list = []
+
 
         self.v_names = {}
         self.v_colors = {}
@@ -15,9 +20,13 @@ class Graph:
         for v1 in self.list:
             if len(self.list[v1]) != 0:
                 for v2 in self.list[v1]:
-                    print(v1,'->',v2)
+                    if (v1, v2) in self.e_oriented_list:
+                        print(v1,'->',v2)
+                    elif (v1, v2) in self.e_not_oriented_list or (v2,v1) in self.e_not_oriented_list:
+                        print(v1,'=',v2)
             else:
                 print(v1)
+
 
     def return_v_amount(self):
         return self.v_amount
@@ -37,35 +46,10 @@ class Graph:
         #if vertex2 in self.list.keys():
         self.list[vertex2].append(vertex1)
 
-        self.e_list.append((vertex1, vertex2))
-        self.e_list.append((vertex2, vertex1))
+        self.e_list['e'+str(self.e_amount)] = (vertex1, vertex2)
 
-        # if len(self.list) == 0:
-        #     little_list1 = []
-        #     little_list1.append(vertex2)
-        #     little_list2 = []
-        #     little_list2.append(vertex1)
-        #     self.list[vertex1] = little_list1
-        #     self.list[vertex2] = little_list2
-        #     self.add_v(vertex1)
-        #     self.add_v(vertex2)
-        #
-        # else:
-        #     if vertex1 in self.list.keys():
-        #         self.list[vertex1].append(vertex2)
-        #
-        #     if vertex2 in self.list.keys():
-        #         self.list[vertex2].append(vertex1)
+        self.e_not_oriented_list.append((vertex1, vertex2))
 
-
-            # if vertex1 not in self.list.keys():
-            #     little_list1 = []
-            #     little_list1.append(vertex2)
-            #     self.list[vertex1] = little_list1
-            # if vertex2 not in self.list.keys():
-            #     little_list2 = []
-            #     little_list2.append(vertex1)
-            #     self.list[vertex2] = little_list2
 
     # add EDGE from vertex1 to vertex2
     def add_oriented_e(self, vertex1, vertex2):
@@ -75,21 +59,10 @@ class Graph:
         self.add_v(vertex2)
         self.list[vertex1].append(vertex2)
 
-        self.e_list.append((vertex1, vertex2))
-        # if len(self.list) == 0:
-        #     little_list = []
-        #     little_list.append(vertex2)
-        #     self.list[vertex1] = little_list
-        # else:
-        #     if vertex1 in self.list.keys():
-        #         for vertex in self.list.keys():
-        #             if vertex == vertex1:
-        #                 self.list[vertex].append(vertex2)
-        #
-        #     else:
-        #         little_list = []
-        #         little_list.append(vertex2)
-        #         self.list[vertex1] = little_list
+        self.e_list['e'+str(self.e_amount)] = (vertex1, vertex2)
+
+        self.e_oriented_list.append((vertex1, vertex2))
+
     # add VERTEX
     def add_v(self, vertex):
 
@@ -126,17 +99,18 @@ class Graph:
         self.v_amount -= 1
 
     def del_e(self, vertex1, vertex2):
-        if vertex1 in self.list and vertex2 in self.list:
+        # if oriented
+        if (vertex1, vertex2) in self.e_oriented_list:
             if vertex2 in self.list[vertex1]:
                 self.list[vertex1].remove(vertex2)
-                for i in self.e_list:
-                    if i == (vertex1, vertex2):
-                        self.e_list.remove(i)
+                self.e_amount -= 1
+        # if not oriented
+        elif (vertex1, vertex2) in self.e_not_oriented_list:
+            self.e_amount -= 1
+            if vertex2 in self.list[vertex1]:
+                self.list[vertex1].remove(vertex2)
             if vertex1 in self.list[vertex2]:
                 self.list[vertex2].remove(vertex1)
-                for i in self.e_list:
-                    if i == (vertex2, vertex1):
-                        self.e_list.remove(i)
 
 
 
