@@ -78,24 +78,7 @@ class Graph:
 
 
 
-
-
-    def gamilton(self, v0):
-        find = False
-        if v0 not in self.gam_path:
-            self.gam_path.append(v0)
-            if len(self.gam_path) == len(self.v_list):
-                return True
-            for v in self.gam_not_visited:
-                if v not in self.gam_visited:
-                    self.gam_visited.append(v)
-                    self.gam_path.append(v)
-                    find = self.gamilton(v)
-                    if not find:
-                        self.gam_visited.remove(v)
-        return find
-
-
+    # -------------- CONNECTION -----------------
     # return True if it is
     # False if it is not
     def is_connected(self):
@@ -149,6 +132,9 @@ class Graph:
                                     return True
             return False
 
+    # -------------------------------------------
+
+
     def DFSUtil(self, v, visited):
 
         # Mark the current node as visited and print it
@@ -175,43 +161,95 @@ class Graph:
                 self.DFSUtil(i, visited)
 
 
+    # -------------- GAMILTON -----------------
+    # find GAMILTON CYCLES
     def dfs_gamilton(self, v0, vertex, visited, not_visited_edges):
         flag = False
-        if v0 == vertex and len(visited) == len(self.v_list):
-            v0.gam_path.append(vertex.sign)
-            flag = True
+
         if flag == False:
+            if v0 == vertex and len(visited) == len(self.v_list):
+                v0.gam_path.append(vertex.sign)
+                flag = True
             if vertex.sign not in visited:
                 visited.append(vertex.sign)
                 v0.gam_path.append(vertex.sign)
-                #print('not visited edges for', vertex.sign,not_visited_edges)
+                print('not visited edges for', vertex.sign)
+
                 for e in not_visited_edges:
-                    #print(e.vertex1.sign,'->',e.vertex2.sign)
-                    if e.vertex1 == vertex:
-                        v = e.vertex2
-                        not_visited_edges.remove(e)
-                        edges = []
-                        for edge in v.edges:
-                            edges.append(edge)
-                        flag = self.dfs_gamilton(v0, v, visited,edges)
-                        if flag:
-                            return True
-                        else:
-                            if e.type == 1:
-                                self.add_e_oriented(vertex.sign, v.sign)
-                            elif e.type == 2:
-                                self.add_e_not_oriented(vertex.sign, v.sign)
+                    if e.type == 1:
+                        if e.vertex1 == vertex:
+                            v = e.vertex2
+                            print(vertex.sign,'->',v.sign)
+                            not_visited_edges.remove(e)
+                            edges = []
+                            for edge in v.edges:
+                                if e != edge:
+                                    edges.append(edge)
+                            flag = self.dfs_gamilton(v0, v, visited,edges)
+
+                            if not flag:
+                                if e.type == 1:
+                                    #self.add_e_oriented(vertex.sign, v.sign)
+                                    not_visited_edges.append(e)
+                                    # visited.remove(v.sign)
+                                    # v0.gam_path.remove(v.sign)
+                                elif e.type == 2:
+                                    #self.add_e_not_oriented(vertex.sign, v.sign)
+                                    not_visited_edges.append(e)
+                                    # visited.remove(v.sign)
+                                    # v0.gam_path.remove(v.sign)
+                    elif e.type == 2:
+                        if e.vertex1 == vertex:
+                            v = e.vertex2
+                            print(vertex.sign,'->',v.sign)
+                            not_visited_edges.remove(e)
+                            edges = []
+                            for edge in v.edges:
+                                if e != edge:
+                                    edges.append(edge)
+                            flag = self.dfs_gamilton(v0, v, visited, edges)
+                            if flag:
+                                return True
+                            else:
+                                if e.type == 1:
+                                    #self.add_e_oriented(vertex.sign, v.sign)
+                                    not_visited_edges.append(e)
+                                elif e.type == 2:
+                                    #self.add_e_not_oriented(vertex.sign, v.sign)
+                                    not_visited_edges.append(e)
+                        elif e.vertex1 != vertex:
+                            v = e.vertex1
+                            print(vertex.sign, '->', v.sign)
+                            not_visited_edges.remove(e)
+                            edges = []
+                            for edge in v.edges:
+                                if e != edge:
+                                    edges.append(edge)
+                            flag = self.dfs_gamilton(v0, v, visited,edges)
+                            if flag:
+                                return True
+                            else:
+                                if e.type == 1:
+                                   # self.add_e_oriented(vertex.sign, v.sign)
+                                    not_visited_edges.append(e)
+                                    # visited.remove(v.sign)
+                                    # v0.gam_path.remove(v.sign)
+                                elif e.type == 2:
+                                    #self.add_e_not_oriented(vertex.sign, v.sign)
+                                    not_visited_edges.append(e)
+                                    # visited.remove(v.sign)
+                                    # v0.gam_path.remove(v.sign)
+
+
         return flag
-
-
-
 
     def is_gamilton(self):
         for v in self.v_list:
-            print(v.sign)
             not_visited_edges = []
             for e in v.edges:
                 not_visited_edges.append(e)
+                print(e.type,':',e.vertex1.sign, '->', e.vertex2.sign)
+            print('-------vertex',v.sign)
             f = self.dfs_gamilton(v, v, [], not_visited_edges)
             if f:
                 self.gam_cycles.append(v.gam_path)
@@ -226,23 +264,49 @@ class Graph:
         #     count = 1
         #     self.dfs_gamilton(v, v, visited, count)
         #     print(v.sign, 'path-', visited)
+    # -----------------------------------------
+
+
+    def dfs(self, v0, vertex, path, visited, count):
+        flag = False
+        if flag == False:
+            if self.matrix[vertex.index][count-1] == 1:
+                if count == len(self.v_list) and v0 == vertex:
+                    flag = True
+                else:
+                    if vertex not in visited:
+                        visited.append(vertex)
+                        path[count] = vertex.sign
+
+
+                        for v in self.v_list:
+                            if v.index == count - 1:
+                             flag = self.dfs(v0, v, path, visited, count+1)
+                             if flag == False:
+                                 visited.remove(v)
+
+        return flag
 
 
 
-    def dfs(self, v0, vertex):
-        visited = []
-        for v in vertex.degree:
-            if len(v0.connection) == 0:
-                v0.connection[v.sign] = 1
-                #visited.append(v)
-                self.dfs(v0, v)
-            else:
-                if v not in v0.connection.keys():
-                    v0.connection_count += 1
-                    v0.connection[v.sign] = v0.connection_count
-                    visited.append(v)
-                    self.dfs(v0, v)
-        return True
+
+
+
+
+    def check_dfs(self):
+        for v in self.v_list:
+            path = []
+            for i in range(len(self.v_list)):
+                path.append(0)
+            #path = []
+            visited = []
+            count = 0
+            path[count] = v.sign
+            print(v.sign)
+            flag = self.dfs(v,v,path, visited, count + 1)
+            print(path)
+
+
     # центр - множество вершин
     def center(self):
         min = 0
@@ -295,6 +359,7 @@ class Graph:
 
         self.matrix.pop(del_v.index)
         self.v_list.remove(del_v)
+        self.v_amount -= 1
 
     def set_v_color(self, vertex, color):
         for v in self.v_list:
@@ -322,16 +387,17 @@ class Graph:
         e = Edge(self, v1, v2, 1, sign)
         self.e_list.append(e)
 
+        v1.degree.append(v2)
+        v1.edges.append(e)
+        #v2.degree.append(v1)
+
         # add EDGE to the matrix
         for count, list in enumerate(self.matrix):
             if v1.index == count:
                 for i in range(0, len(list)):
                     if i == v2.index:
                         list[i] = 1
-                        v1.degree.append(v2)
-                        v1.edges.append(e)
-                        v2.degree.append(v1)
-                        v2.edges.append(e)
+                        break
 
 
     def add_e_not_oriented(self, vertex1, vertex2):
@@ -343,7 +409,13 @@ class Graph:
             elif v.sign == vertex2:
                 v2 = v
         e = Edge(self, v1, v2, 2, sign)
+        print(e.vertex1.sign,'->',e.vertex2.sign)
         self.e_list.append(e)
+
+        v1.degree.append(v2)
+        v2.degree.append(v1)
+        v1.edges.append(e)
+        v2.edges.append(e)
 
         # add EDGE to the matrix
         for count, list in enumerate(self.matrix):
@@ -351,14 +423,12 @@ class Graph:
                 for i in range(0, len(list)):
                     if i == v2.index:
                         list[i] = 1
-                        v1.degree.append(v2)
-                        v1.edges.append(e)
+                        break
             if v2.index == count:
                 for i in range(0, len(list)):
                     if i == v1.index:
                         list[i] = 1
-                        v2.degree.append(v1)
-                        v2.edges.append(e)
+                        break
 
     # remove EDGE
     def remove_e(self, edge):
@@ -395,6 +465,7 @@ class Graph:
                                     v1.degree.remove(v2)
                                     v2.degree.remove(v1)
                     self.e_list.remove(e)
+        self.e_amount -= 1
 
 
     def set_e_color(self, edge, color):
@@ -449,46 +520,78 @@ class Graph:
 
             #print(value)
             if value == 0:
-                pass
-                # if v0.index != 0:
-                #     if i != v0.index:
-                #         if min_path_matrix[i][v0.index] != 0:
-                #             min_path_matrix[v0.index][i] = min_path_matrix[i][v0.index]
+                index = vertex.index - 1
+                if i != vertex.index:
+                    while index >= 0:
+
+                        if min_path_matrix[index][i] != 0:
+                            min_path_matrix[vertex.index][i] = min_path_matrix[index][i] + 1
+                        index -= 1
 
             elif value >= 1:
-                if v0.index != 0:
-                    if i != v0.index:
-                        print(v0.sign,min_path_matrix[v0.index])
-                        if min_path_matrix[v0.index-1][i] == 0:
-                            min_path_matrix[v0.index-1][i] = (vertex.index + 1)
+                # if v0.index != 0:
+                #     if i != v0.index:
+                #         print(v0.sign,min_path_matrix[v0.index])
+                #         if min_path_matrix[v0.index-1][i] == 0:
+                #             min_path_matrix[v0.index-1][i] = (vertex.index + 1)
+                index = vertex.index - 1
+                #if min_path_matrix[index][i] == 0:
 
 
+                count = 2
+                print(vertex.sign, value, i, vertex.index)
+                if i != vertex.index:
+                    # нужно ведь и самаго него изменить
+                    # можео проверить, что он последний в графе
+
+                    # нужно проверять направление дуг?
+                    while index >= 0:
+                        if index != i:
+                            # не корректно
+                            # потребуется еще доп проверка
+                            if min_path_matrix[index][i] > count or min_path_matrix[index][i] == 0:
+                                min_path_matrix[index][i] = count
+                                index -= 1
+                                count += 1
+                            else:
+                                index -= 1
+                        else:
+                            index -= 1
+                        # if min_path_matrix[index][i] > count:
+                        #     min_path_matrix[index][i] = count
+                        #     index -= 1
+                        #     count += 1
+                        # else:
+                        #     index -= 1
+                        #     count += 1
+
+            # для корректного отображения остальных [], но не ткущего, нужна езе проверка
+            if vertex.index == len(self.v_list) - 1:
+                for i in range(0, len(self.v_list)-1):
+                    print('vert',self.v_list[i].sign)
+                    self.find_min_path_matrix(self.v_list[i], self.v_list[i], min_path_matrix)
 
 
-
-        # for i, value in enumerate(self.matrix[vertex.index]):
-        #     #print(value)
-        #     if value == 0:
-        #         pass
-        #         # if v0.index != 0:
-        #         #     if i != v0.index:
-        #         #         if min_path_matrix[i][v0.index] != 0:
-        #         #             min_path_matrix[v0.index][i] = min_path_matrix[i][v0.index]
         #
-        #     elif value >= 1:
-        #         if v0.index != 0:
-        #             if i != v0.index:
-        #                 print(v0.sign,min_path_matrix[v0.index])
-        #                 if min_path_matrix[v0.index-1][i] == 0:
-        #                     min_path_matrix[v0.index-1][i] = (vertex.index + 1)
+    def check_last_vertex(self, vertex, min_path_matrix):
+        last = []
+        index = 0
+        for i in min_path_matrix[vertex.index]:
+            last.append(i)
 
-                # k = self.find_min_path_matrix(v0, vertex, min_path_matrix)
-        # return True
-            #     path = self.find_min_path_matrix(v0, self.v_list[i])
-        # for line in self.matrix:
-        #     for i in line:
-        #         if i == 1:
-        #
+
+        for i, value in enumerate(min_path_matrix[vertex.index]):
+            if value == 1:
+                index = i
+            if value == 0:
+                if i != vertex.index:
+                    if min_path_matrix[index][i] != 0:
+                        min_path_matrix[vertex.index][i] = min_path_matrix[index][i] + 1
+
+
+
+
+
     def min_path_matrix(self):
         min_path_matrix = []
 
@@ -498,5 +601,7 @@ class Graph:
         for vertex in self.v_list:
             #(vertex.sign, vertex.index)
             self.find_min_path_matrix(vertex, vertex, min_path_matrix)
+            if vertex.index == len(self.v_list) - 1:
+                self.check_last_vertex(vertex, min_path_matrix)
         for list in min_path_matrix:
             print(list)
