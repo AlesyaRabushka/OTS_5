@@ -168,13 +168,21 @@ class Graph:
         flag = False
 
         for e in edges:
+            print(e.vertex1.sign,'->',e.vertex2.sign)
             vertex = e.vertex2
             if vertex in not_visited_vertexes:
                 if vertex == v0:
-                    print('here',vertex.sign, len(not_visited_vertexes))
+                    print('here',vertex.sign, len(self.v_list)-1, len(path), len(not_visited_vertexes))
                     if len(path) == len(self.v_list)-1 and len(not_visited_vertexes) == 1:
                         path.append(vertex.sign)
+                        new_path = []
+                        new_path.append(v0.sign)
+                        for v in path:
+                            new_path.append(v)
+                        self.gam_cycles.append(new_path)
                         return True
+                    # else:
+                    #     path.remove(vertex.sign)
 
                 else:
                     print('add ', vertex.sign)
@@ -183,88 +191,9 @@ class Graph:
                     flag = self.dfs_gamilton(v0, vertex.edges,  path, not_visited_vertexes)
                     if flag == False:
                         path.remove(vertex.sign)
+                        not_visited_vertexes.append(vertex)
                     else:
                         return flag
-
-
-
-
-
-
-        # if flag == False:
-        #     if v0 == vertex and len(visited) == len(self.v_list):
-        #         v0.gam_path.append(vertex.sign)
-        #         flag = True
-        #     if vertex.sign not in visited:
-        #         visited.append(vertex.sign)
-        #         v0.gam_path.append(vertex.sign)
-        #         print('not visited edges for', vertex.sign)
-        #
-        #         for e in not_visited_edges:
-        #             if e.type == 1:
-        #                 if e.vertex1 == vertex:
-        #                     v = e.vertex2
-        #                     print(vertex.sign,'->',v.sign)
-        #                     not_visited_edges.remove(e)
-        #                     edges = []
-        #                     for edge in v.edges:
-        #                         if e != edge:
-        #                             edges.append(edge)
-        #                     flag = self.dfs_gamilton(v0, v, visited,edges)
-        #
-        #                     if not flag:
-        #                         if e.type == 1:
-        #                             #self.add_e_oriented(vertex.sign, v.sign)
-        #                             not_visited_edges.append(e)
-        #                             # visited.remove(v.sign)
-        #                             # v0.gam_path.remove(v.sign)
-        #                         elif e.type == 2:
-        #                             #self.add_e_not_oriented(vertex.sign, v.sign)
-        #                             not_visited_edges.append(e)
-        #                             # visited.remove(v.sign)
-        #                             # v0.gam_path.remove(v.sign)
-        #             elif e.type == 2:
-        #                 if e.vertex1 == vertex:
-        #                     v = e.vertex2
-        #                     print(vertex.sign,'->',v.sign)
-        #                     not_visited_edges.remove(e)
-        #                     edges = []
-        #                     for edge in v.edges:
-        #                         if e != edge:
-        #                             edges.append(edge)
-        #                     flag = self.dfs_gamilton(v0, v, visited, edges)
-        #                     if flag:
-        #                         return True
-        #                     else:
-        #                         if e.type == 1:
-        #                             #self.add_e_oriented(vertex.sign, v.sign)
-        #                             not_visited_edges.append(e)
-        #                         elif e.type == 2:
-        #                             #self.add_e_not_oriented(vertex.sign, v.sign)
-        #                             not_visited_edges.append(e)
-        #                 elif e.vertex1 != vertex:
-        #                     v = e.vertex1
-        #                     print(vertex.sign, '->', v.sign)
-        #                     not_visited_edges.remove(e)
-        #                     edges = []
-        #                     for edge in v.edges:
-        #                         if e != edge:
-        #                             edges.append(edge)
-        #                     flag = self.dfs_gamilton(v0, v, visited,edges)
-        #                     if flag:
-        #                         return True
-        #                     else:
-        #                         if e.type == 1:
-        #                            # self.add_e_oriented(vertex.sign, v.sign)
-        #                             not_visited_edges.append(e)
-        #                             # visited.remove(v.sign)
-        #                             # v0.gam_path.remove(v.sign)
-        #                         elif e.type == 2:
-        #                             #self.add_e_not_oriented(vertex.sign, v.sign)
-        #                             not_visited_edges.append(e)
-        #                             # visited.remove(v.sign)
-        #                             # v0.gam_path.remove(v.sign)
-        #
 
         return flag
 
@@ -275,67 +204,20 @@ class Graph:
             for e in self.v_list:
                 if e != v:
                     not_visited_vertexes.append(e)
-                    print(e.sign)
                 #print(e.type,':',e.vertex1.sign, '->', e.vertex2.sign)
             not_visited_vertexes.append(v)
             path = []
            # path.append(v.sign)
 
             f = self.dfs_gamilton(v, v.edges, path, not_visited_vertexes)
-            if f:
-                self.gam_cycles.append(path)
-        print(self.gam_cycles)
-        return f
+        if len(self.gam_cycles) != 0:
+            print(self.gam_cycles)
+            return True
+        else:
+            return False
 
-
-        # for v in self.v_list:
-        #     path = []
-        #     count = 0
-        #     visited = []
-        #     count = 1
-        #     self.dfs_gamilton(v, v, visited, count)
-        #     print(v.sign, 'path-', visited)
     # -----------------------------------------
 
-
-    def dfs(self, v0, vertex, path, visited, count):
-        flag = False
-        if flag == False:
-            if self.matrix[vertex.index][count-1] == 1:
-                if count == len(self.v_list) and v0 == vertex:
-                    flag = True
-                else:
-                    if vertex not in visited:
-                        visited.append(vertex)
-                        path[count] = vertex.sign
-
-
-                        for v in self.v_list:
-                            if v.index == count - 1:
-                             flag = self.dfs(v0, v, path, visited, count+1)
-                             if flag == False:
-                                 visited.remove(v)
-
-        return flag
-
-
-
-
-
-
-
-    def check_dfs(self):
-        for v in self.v_list:
-            path = []
-            for i in range(len(self.v_list)):
-                path.append(0)
-            #path = []
-            visited = []
-            count = 0
-            path[count] = v.sign
-            print(v.sign)
-            flag = self.dfs(v,v,path, visited, count + 1)
-            print(path)
 
 
     # центр - множество вершин
