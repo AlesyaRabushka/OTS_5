@@ -44,16 +44,20 @@ class Graph:
         self.matrix = []
         self.name = ''
 
-        self.ex = {}
-
-
         self.v_amount = 0
         self.e_amount = 0
-
+        # gam cycles
         self.gam_cycles = []
 
-        self.visited = []
-        self.not_visited = []
+        self.min_path_matrix = []
+
+
+
+
+
+
+
+
 
     # set graph NAME
     def set_name(self, name):
@@ -136,30 +140,7 @@ class Graph:
     # -------------------------------------------
 
 
-    def DFSUtil(self, v, visited):
 
-        # Mark the current node as visited and print it
-        visited[v] = True
-        print(v)
-        # Recur for all the vertices adjacent to
-        # this vertex
-        for i in self.v_list[v]:
-            if visited[i] == False:
-                self.DFSUtil(i, visited)
-    # The function to do DFS traversal. It uses
-    # recursive DFSUtil()
-    def DFS(self):
-        V = len(self.v_list)  # total vertices
-
-        # Mark all the vertices as not visited
-        visited = [False] * (V)
-
-        # Call the recursive helper function to print
-        # DFS traversal starting from all vertices one
-        # by one
-        for i in range(V):
-            if visited[i] == False:
-                self.DFSUtil(i, visited)
 
 
     # -------------- GAMILTON -----------------
@@ -194,8 +175,8 @@ class Graph:
                         not_visited_vertexes.append(vertex)
                     else:
                         return flag
-
         return flag
+
 
     def is_gamilton(self):
         for v in self.v_list:
@@ -218,7 +199,37 @@ class Graph:
 
     # -----------------------------------------
 
+    def dfs_center(self, v0, edges, not_checked_vertexes):
+        flag = False
 
+        for e in edges:
+            print(e.vertex1.sign, '->', e.vertex2.sign)
+            vertex = e.vertex2
+            if vertex in not_visited_vertexes:
+                if vertex == v0:
+                    print('here', vertex.sign, len(self.v_list) - 1, len(path), len(not_visited_vertexes))
+                    if len(path) == len(self.v_list) - 1 and len(not_visited_vertexes) == 1:
+                        path.append(vertex.sign)
+                        new_path = []
+                        new_path.append(v0.sign)
+                        for v in path:
+                            new_path.append(v)
+                        self.gam_cycles.append(new_path)
+                        return True
+                    # else:
+                    #     path.remove(vertex.sign)
+
+                else:
+                    print('add ', vertex.sign)
+                    path.append(vertex.sign)
+                    not_visited_vertexes.remove(vertex)
+                    flag = self.dfs_gamilton(v0, vertex.edges, path, not_visited_vertexes)
+                    if flag == False:
+                        path.remove(vertex.sign)
+                        not_visited_vertexes.append(vertex)
+                    else:
+                        return flag
+        return flag
 
     # центр - множество вершин
     def center(self):
@@ -440,23 +451,16 @@ class Graph:
                 index = vertex.index - 1
                 if i != vertex.index:
                     while index >= 0:
-
                         if min_path_matrix[index][i] != 0:
-                            min_path_matrix[vertex.index][i] = min_path_matrix[index][i] + 1
+                            if min_path_matrix[vertex.index][i] < min_path_matrix[index][i] + 1:
+                                pass
+                            else:
+                                min_path_matrix[vertex.index][i] = min_path_matrix[index][i] + 1
                         index -= 1
 
             elif value >= 1:
-                # if v0.index != 0:
-                #     if i != v0.index:
-                #         print(v0.sign,min_path_matrix[v0.index])
-                #         if min_path_matrix[v0.index-1][i] == 0:
-                #             min_path_matrix[v0.index-1][i] = (vertex.index + 1)
                 index = vertex.index - 1
-                #if min_path_matrix[index][i] == 0:
-
-
                 count = 2
-                print(vertex.sign, value, i, vertex.index)
                 if i != vertex.index:
                     # нужно ведь и самаго него изменить
                     # можео проверить, что он последний в графе
@@ -474,19 +478,14 @@ class Graph:
                                 index -= 1
                         else:
                             index -= 1
-                        # if min_path_matrix[index][i] > count:
-                        #     min_path_matrix[index][i] = count
-                        #     index -= 1
-                        #     count += 1
-                        # else:
-                        #     index -= 1
-                        #     count += 1
+                            count += 1
+
 
             # для корректного отображения остальных [], но не ткущего, нужна езе проверка
-            if vertex.index == len(self.v_list) - 1:
-                for i in range(0, len(self.v_list)-1):
-                    print('vert',self.v_list[i].sign)
-                    self.find_min_path_matrix(self.v_list[i], self.v_list[i], min_path_matrix)
+            # if vertex.index == len(self.v_list) - 1:
+            #     for i in range(0, len(self.v_list)-1):
+            #         print('vert',self.v_list[i].sign)
+            #         self.find_min_path_matrix(self.v_list[i], self.v_list[i], min_path_matrix)
 
 
         #
@@ -506,10 +505,48 @@ class Graph:
                         min_path_matrix[vertex.index][i] = min_path_matrix[index][i] + 1
 
 
+    def dfs_min_path(self, v0, vertex, min_path_matrix, count):
+        for i, value in enumerate(min_path_matrix[vertex.index]):
+            if i != v0.index:
+                #if value == 0:
+                for index, value
 
 
 
-    def min_path_matrix(self):
+
+                # if i > v0.index:
+                #     index = v0.index + 1
+                #     while index < len(min_path_matrix):
+                #         if min_path_matrix[index][i] != 0:
+                #             if min_path_matrix[v0.index][i] <= min_path_matrix[index][i] + 1 and min_path_matrix[v0.index][i] != 0:
+                #                 break
+                #             else:
+                #                 min_path_matrix[v0.index][i] = min_path_matrix[index][i] + 1
+                #                 break
+                #         else:
+                #             index += 1
+                # elif i < v0.index:
+                #     index = v0.index - 1
+                #     while index >= 0:
+                #         if min_path_matrix[index][i] != 0:
+                #             if min_path_matrix[v0.index][i] <= min_path_matrix[index][i] + 1 and min_path_matrix[v0.index][i] != 0:
+                #                 break
+                #             else:
+                #                 min_path_matrix[v0.index][i] = min_path_matrix[index][i] + 1
+                #                 break
+                #         else:
+                #             index -= 1
+
+                    # for list in min_path_matrix:
+                    #     for other_index, other_value in enumerate(list):
+                    #         #if other_index != v0.index:
+                    #         if min_path_matrix[i][other_index] != 0:
+                    #             if min_path_matrix[v0.index][i] == 0:
+                    #                 min_path_matrix[v0.index][i] = 19
+
+
+
+    def min_path(self):
         min_path_matrix = []
 
         for list in self.matrix:
@@ -517,8 +554,13 @@ class Graph:
 
         for vertex in self.v_list:
             #(vertex.sign, vertex.index)
-            self.find_min_path_matrix(vertex, vertex, min_path_matrix)
-            if vertex.index == len(self.v_list) - 1:
-                self.check_last_vertex(vertex, min_path_matrix)
+            self.dfs_min_path(vertex, vertex, min_path_matrix, 1)
+
+
+            # self.find_min_path_matrix(vertex, vertex, min_path_matrix)
+            # if vertex.index == len(self.v_list) - 1:
+            #     self.check_last_vertex(vertex, min_path_matrix)
+        # for i in range(len(self.v_list)-1, -1, -1):
+        #     self.find_min_path_matrix(self.v_list[i],self.v_list[i], min_path_matrix)
         for list in min_path_matrix:
             print(list)
