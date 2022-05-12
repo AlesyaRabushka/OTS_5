@@ -10,6 +10,7 @@ class Vertex:
         self.degrees = 0
         self.edges = []
         self.color = ''
+        self.text = ''
 
         self.ex = {}
         self.visited = []
@@ -66,6 +67,8 @@ class Graph:
     def print_matrix(self):
         for list in self.matrix:
             print(list)
+        for v in self.v_list:
+            print(v.sign, v.index)
 
     def return_v_amount(self):
         return len(self.v_list)
@@ -92,13 +95,29 @@ class Graph:
             path = []
             kol, path = self.dfs_connected(v, v, path)
             v.connection_path = path
-            print(v.sign, 'kolvo',kol, 'path-', path)
+            print(v.sign, 'kolvo', kol, 'path-', path)
             if kol == len(self.v_list):
                 count += 1
-        if count == len(self.v_list) or count == len(self.v_list) - 1:
-            return True
-        else:
-            return False
+                return True
+            # if count == len(self.v_list) or count == len(self.v_list) - 1:
+            #     return True
+
+        return False
+
+
+        # # Если для ориентироавнного
+        # count = 0
+        # for v in self.v_list:
+        #     path = []
+        #     kol, path = self.dfs_connected(v, v, path)
+        #     v.connection_path = path
+        #     print(v.sign, 'kolvo',kol, 'path-', path)
+        #     if kol == len(self.v_list):
+        #         count += 1
+        # if count == len(self.v_list) or count == len(self.v_list) - 1:
+        #     return True
+        # else:
+        #     return False
 
     def dfs_connected(self, v0, vertex, path):
         all_vis = 1
@@ -131,7 +150,7 @@ class Graph:
                     for v in self.v_list:
                         for v1 in not_connected_vertexes:
                             if v.sign == v1:
-                                self.add_e_oriented(vertex.sign, v.sign)
+                                self.add_e_oriented(vertex.sign, v.sign, '', 1)
                                 print(vertex.sign,'->', v.sign)
                                 if self.is_connected():
                                     return True
@@ -179,8 +198,11 @@ class Graph:
 
 
     def is_gamilton(self):
+        self.gam_cycles = []
+
         for v in self.v_list:
             not_visited_vertexes = []
+
             print('-------vertex', v.sign)
             for e in self.v_list:
                 if e != v:
@@ -197,39 +219,41 @@ class Graph:
         else:
             return False
 
+
+
     # -----------------------------------------
 
-    def dfs_center(self, v0, edges, not_checked_vertexes):
-        flag = False
-
-        for e in edges:
-            print(e.vertex1.sign, '->', e.vertex2.sign)
-            vertex = e.vertex2
-            if vertex in not_visited_vertexes:
-                if vertex == v0:
-                    print('here', vertex.sign, len(self.v_list) - 1, len(path), len(not_visited_vertexes))
-                    if len(path) == len(self.v_list) - 1 and len(not_visited_vertexes) == 1:
-                        path.append(vertex.sign)
-                        new_path = []
-                        new_path.append(v0.sign)
-                        for v in path:
-                            new_path.append(v)
-                        self.gam_cycles.append(new_path)
-                        return True
-                    # else:
-                    #     path.remove(vertex.sign)
-
-                else:
-                    print('add ', vertex.sign)
-                    path.append(vertex.sign)
-                    not_visited_vertexes.remove(vertex)
-                    flag = self.dfs_gamilton(v0, vertex.edges, path, not_visited_vertexes)
-                    if flag == False:
-                        path.remove(vertex.sign)
-                        not_visited_vertexes.append(vertex)
-                    else:
-                        return flag
-        return flag
+    # def dfs_center(self, v0, edges, not_checked_vertexes):
+    #     flag = False
+    #
+    #     for e in edges:
+    #         print(e.vertex1.sign, '->', e.vertex2.sign)
+    #         vertex = e.vertex2
+    #         if vertex in not_visited_vertexes:
+    #             if vertex == v0:
+    #                 print('here', vertex.sign, len(self.v_list) - 1, len(path), len(not_visited_vertexes))
+    #                 if len(path) == len(self.v_list) - 1 and len(not_visited_vertexes) == 1:
+    #                     path.append(vertex.sign)
+    #                     new_path = []
+    #                     new_path.append(v0.sign)
+    #                     for v in path:
+    #                         new_path.append(v)
+    #                     self.gam_cycles.append(new_path)
+    #                     return True
+    #                 # else:
+    #                 #     path.remove(vertex.sign)
+    #
+    #             else:
+    #                 print('add ', vertex.sign)
+    #                 path.append(vertex.sign)
+    #                 not_visited_vertexes.remove(vertex)
+    #                 flag = self.dfs_gamilton(v0, vertex.edges, path, not_visited_vertexes)
+    #                 if flag == False:
+    #                     path.remove(vertex.sign)
+    #                     not_visited_vertexes.append(vertex)
+    #                 else:
+    #                     return flag
+    #     return flag
 
     # центр - множество вершин
     def center(self):
@@ -298,102 +322,144 @@ class Graph:
 
 
 
-    def add_e_oriented(self, vertex1, vertex2):
-        self.e_amount += 1
-        sign = 'e' + str(self.e_amount)
-
+    def add_e_oriented(self, vertex1, vertex2, name, type):
         #NOT SURE if we shoul add new vertexes
         #v1, v2 = None, None
+
         v1 = self.find_vertex(vertex1)
         v2 = self.find_vertex(vertex2)
 
+        if v1 == None or v2 == None:
+            return False
+        else:
+            self.e_amount += 1
+            if name == '':
+                sign = 'e' + str(self.e_amount)
+            else:
+                sign = name
+            if type == 1:
+                e = Edge(self, v1, v2, 1, sign)
+                self.e_list.append(e)
+                v1.degree.append(v2)
+                v1.edges.append(e)
+                v1.degrees += 1
+                v2.degrees += 1
+            elif type == 2:
+                e = Edge(self, v1, v2, 2, sign)
+                self.e_list.append(e)
+                v1.degree.append(v2)
+                v1.edges.append(e)
+                v1.degrees += 1
+                v2.degrees += 1
 
-        e = Edge(self, v1, v2, 1, sign)
-        self.e_list.append(e)
 
-        v1.degree.append(v2)
-        v1.edges.append(e)
-        v1.degrees += 1
-        v2.degrees += 1
-        #v2.degree.append(v1)
-
-        # add EDGE to the matrix
-        for count, list in enumerate(self.matrix):
-            if v1.index == count:
-                for i in range(0, len(list)):
-                    if i == v2.index:
-                        list[i] = 1
-                        break
+            # add EDGE to the matrix
+            for count, list in enumerate(self.matrix):
+                if v1.index == count:
+                    for i in range(0, len(list)):
+                        if i == v2.index:
+                            list[i] += 1
+                            break
+            return True
 
 
-    def add_e_not_oriented(self, vertex1, vertex2):
-        #self.e_amount += 1
-        sign = 'e' + str(self.e_amount)
+    def add_e_not_oriented(self, vertex1, vertex2, name):
         for v in self.v_list:
             if v.sign == vertex1:
-                self.add_e_oriented(vertex1, vertex2)
-                v.degrees -= 1
+                # self.add_e_oriented(vertex1, vertex2, name, 2)
+                # v.degrees -= 1
+                v1 = v
             elif v.sign == vertex2:
-                self.add_e_oriented(vertex2, vertex1)
-                v.degrees -= 1
-        # e = Edge(self, v1, v2, 2, sign)
-        # print(e.vertex1.sign,'->',e.vertex2.sign)
-        # self.e_list.append(e)
-        #
-        # v1.degree.append(v2)
-        # v2.degree.append(v1)
-        # v1.edges.append(e)
-        # v2.edges.append(e)
-        #
-        # # add EDGE to the matrix
-        # for count, list in enumerate(self.matrix):
-        #     if v1.index == count:
-        #         for i in range(0, len(list)):
-        #             if i == v2.index:
-        #                 list[i] = 1
-        #                 break
-        #     if v2.index == count:
-        #         for i in range(0, len(list)):
-        #             if i == v1.index:
-        #                 list[i] = 1
-        #                 break
+                # self.add_e_oriented(vertex2, vertex1, name, 2)
+                # v.degrees -= 1
+                v2 = v
+        if v1 == None or v2  == None:
+            return False
+        else:
+            e = Edge(self, v1, v2, 2, name)
+
+            print(e.vertex1.sign,'->',e.vertex2.sign)
+            self.e_list.append(e)
+            self.e_amount += 1
+
+            v1.degree.append(v2)
+            v2.degree.append(v1)
+            v1.edges.append(e)
+            v2.edges.append(e)
+            v1.degrees += 1
+            v2.degrees += 1
+            #
+            # # add EDGE to the matrix
+            for count, list in enumerate(self.matrix):
+                if v1.index == count:
+                    for i in range(0, len(list)):
+                        if i == v2.index:
+                            list[i] += 1
+
+                elif v2.index == count:
+                    for i in range(0, len(list)):
+                        if i == v1.index:
+                            list[i] += 1
+            return True
+
 
     # remove EDGE
     def remove_e(self, edge):
+        count = 0
         for e in self.e_list:
             if e.sign == edge:
-
+                count += 1
+                print('edge', e.sign)
                 v1 = e.vertex1
                 v2 = e.vertex2
+                # print(v1.sign)
+                # for e in v1.edges:
+                #     print(e.sign)
+                # print(v2.sign)
+                # for e in v2.edges:
+                #     print(e.sign)
                 if e.type == 2:
                     for count, list in enumerate(self.matrix):
                         if v1.index == count:
                             for i in range(0, len(list)):
                                 if i == v2.index:
-                                    list[i] = 2
-                                    v1.edges.remove(e)
-                                    v1.degree.remove(v2)
+                                    if e in v1.edges:
+                                        list[i] -= 1
+                                        v1.edges.remove(e)
+                                        v1.degree.remove(v2)
 
-                        if v2.index == count:
+
+                        elif v2.index == count:
                             for i in range(0, len(list)):
                                 if i == v1.index:
-                                    list[i] = 2
-                                    v2.edges.remove(e)
-                                    v2.degree.remove(v1)
-                    self.e_list.remove(e)
+                                    if e in v2.edges:
+                                        list[i] -= 1
+                                        v2.edges.remove(e)
+                                        v2.degree.remove(v1)
+
+                    #self.e_list.remove(e)
+
 
                 elif e.type == 1:
                     for count, list in enumerate(self.matrix):
                         if v1.index == count:
                             for i in range(0, len(list)):
                                 if i == v2.index:
-                                    list[i] = 2
+                                    list[i] -= 1
                                     v1.edges.remove(e)
-                                    v2.edges.remove(e)
+                                    #v2.edges.remove(e)
                                     v1.degree.remove(v2)
-                                    v2.degree.remove(v1)
-                    self.e_list.remove(e)
-        self.e_amount -= 1
+                                    #v2.degree.remove(v1)
+                self.e_list.remove(e)
+
+
+        if count != 0:
+            self.e_amount -= 1
+            return True
+        else:
+            return False
+
+
 
 
     def set_e_color(self, edge, color):
@@ -507,9 +573,10 @@ class Graph:
 
     def dfs_min_path(self, v0, vertex, min_path_matrix, count):
         for i, value in enumerate(min_path_matrix[vertex.index]):
-            if i != v0.index:
-                #if value == 0:
-                for index, value
+            pass
+            # if i != v0.index:
+            #     #if value == 0:
+            #     for index, value
 
 
 
@@ -564,3 +631,7 @@ class Graph:
         #     self.find_min_path_matrix(self.v_list[i],self.v_list[i], min_path_matrix)
         for list in min_path_matrix:
             print(list)
+
+
+    def find_center(self):
+        for vertex in self.v_list:

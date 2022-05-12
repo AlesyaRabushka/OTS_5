@@ -1,0 +1,130 @@
+<MainScreen>
+    BoxLayout:
+        orientation: "vertical"
+        adaptive_size: True
+
+        GridLayout:
+            cols: 2
+
+
+
+            GridLayout:
+                cols:2
+                rows:2
+                Label:
+                    background_normal:''
+                    background_color: (0,0,1,1)
+                    canvas.before:
+                        Color:
+                            rgba: self.background_color
+                        Rectangle:
+                            size: self.size
+                            pos: self.pos
+                    id: graph_name
+                    text:''
+                Button:
+                    text: 'add graph'
+                    on_press: root.add_graph()
+                Button:
+                    text: 'switch graph'
+                    on_press: root.change_graph(root.return_change_g_name())
+                TextInput:
+                    hint_text:  'graph name'
+                    on_text: root.change_g_name(self.text)
+
+        GridLayout:
+            cols: 5
+            GridLayout:
+                rows: 4
+                Button:
+                    text: 'add vertex'
+                    on_press: root.add_v(str(root.return_v_name()))
+                Button:
+                    text: 'add vertex color'
+                    on_press: root.set_v_color(root.return_v_name(),root.return_v_color())
+                Button:
+                    text: 'delete vertex'
+                    on_press: root.remove_v(str(root.return_v_name()))
+                Button:
+                    text: 'vertexe degree'
+                    on_press: root.print_v_degree(root.return_v_name())
+
+            GridLayout:
+                rows:2
+                TextInput:
+                    hint_text: 'vertex name'
+                    on_text: root.v_name(self.text)
+                TextInput:
+                    hint_text: 'vertex color'
+                    on_text: root.v_color(self.text)
+
+            GridLayout:
+                rows: 4
+                Button:
+                    text: 'add oriented edge'
+                    on_press: root.add_e_oriented(root.return_e_v_name1(), root.return_e_v_name2(), root.return_e_name())
+                Button:
+                    text: 'add not oriented edge'
+                    on_press: root.add_e_not_oriented(root.return_e_v_name1(), root.return_e_v_name2(), root.return_e_name())
+                Button:
+                    text: 'add edge color'
+                    on_press: root.set_e_color(root.return_e_name(), root.return_e_color())
+                Button:
+                    text: 'delete edge'
+                    on_press: root.remove_e(root.return_e_name())
+
+            GridLayout:
+                rows:2
+                GridLayout:
+                    rows:1
+                    cols:2
+
+                    TextInput:
+                        hint_text: 'v1 name'
+                        on_text: root.e_v_name1(self.text)
+
+                    TextInput:
+                        hint_text: 'v2 name'
+                        on_text: root.e_v_name2(self.text)
+                GridLayout:
+                    cols:2
+                    TextInput:
+                        hint_text: 'edge name'
+                        on_text: root.e_name(self.text)
+                    TextInput:
+                        hint_text: 'edge color'
+                        on_text: root.e_color(self.text)
+
+
+        GridLayout:
+            cols: 2
+            GridLayout:
+                rows:4
+
+                Button:
+                    text: 'print graph information'
+                    on_press: root.print_graph_info()
+
+                Button:
+                    text: 'print hamilton cycles'
+                    on_press: root.print_hamilton_cycles()
+                Button:
+                    text: 'make connected'
+                    on_press: root.make_connected()
+                Button:
+                    text: 'vertexes degree'
+                    on_press: root.print_v_degree('')
+
+            Label:
+                id: matrix
+                background_normal:''
+                background_color: (0,0,1,1)
+                canvas.before:
+                    Color:
+                        rgba: self.background_color
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+                text: '[color=#000000]matrix[/color]'
+                markup: True
+
