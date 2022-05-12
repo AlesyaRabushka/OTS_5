@@ -20,12 +20,22 @@ class MainScreen(MDScreen):
         self.new_name = ''
 
 
-    def add_graph(self):
-        self.count += 1
-        g = Graph()
-        g.name = 'G'+str(self.count)
-        self.graphs.append(g)
-        self.ids.graph_name.text = g.name
+    def add_graph(self, name):
+        flag = False
+        for graph in self.graphs:
+            if graph.name == name:
+                flag = True
+        if flag:
+            self.ids.matrix.text = 'The graph with the same name is already existed'
+        else:
+            self.count += 1
+            g = Graph()
+            if name == '':
+                g.name = 'G'+str(self.count)
+            else:
+                g.name = name
+            self.graphs.append(g)
+            self.ids.graph_name.text = g.name
 
     def add_v(self, name):
         if len(self.graphs) == 0:
@@ -36,9 +46,16 @@ class MainScreen(MDScreen):
                     g.add_v(name)
         else:
             for g in self.graphs:
-                # g.add_v(name)
                 if self.ids.graph_name.text == g.name:
-                    g.add_v(name)
+                    flag = False
+                    for v in g.v_list:
+                        print(v.sign)
+                        if v.sign == name:
+                            flag = True
+                    if flag:
+                        self.ids.matrix.text = 'The vertex with the same name is already existed'
+                    else:
+                        g.add_v(name)
 
     def remove_v(self, name):
         for g in self.graphs:
@@ -48,19 +65,35 @@ class MainScreen(MDScreen):
     def add_e_oriented(self, vertex1, vertex2, name):
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
-                print(vertex1, vertex2)
-                if not (g.add_e_oriented(vertex1, vertex2, name, 1)):
-                    self.ids.matrix.text = 'The vertex does not exist'
+                flag = False
+                for e in g.e_list:
+                    if e.sign == name:
+                        flag = True
+
+                if flag:
+                    self.ids.matrix.text = 'The edge with the same name is already existed'
                 else:
-                    pass
+                    if not (g.add_e_oriented(vertex1, vertex2, name, 1)):
+                        self.ids.matrix.text = 'The vertex does not exist'
+                    else:
+                        pass
+
+
 
     def add_e_not_oriented(self, vertex1, vertex2, name):
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
-                if not g.add_e_not_oriented(vertex1, vertex2, name):
-                    self.ids.matrix.text = 'The vertex does not exist'
+                flag = False
+                for e in g.e_list:
+                    if e.sign == name:
+                        flag = True
+                if flag:
+                    self.ids.matrix.text = 'The edge with the same name is already existed'
                 else:
-                    pass
+                    if not g.add_e_not_oriented(vertex1, vertex2, name):
+                        self.ids.matrix.text = 'The vertex does not exist'
+                    else:
+                        pass
 
     def remove_e(self, edge):
         for g in self.graphs:
@@ -181,6 +214,12 @@ class MainScreen(MDScreen):
         for g in self.graphs:
             if g.name == self.new_name:
                 self.ids.graph_name.text = new_graph_name
+
+
+    def find_c_r_d(self):
+        for g in self.graphs:
+            if g.name == self.ids.graph_name.text:
+                g.min_path()
 
 
     # CHANGE GRAPH NAME

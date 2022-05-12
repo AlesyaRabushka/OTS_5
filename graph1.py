@@ -168,11 +168,10 @@ class Graph:
         flag = False
 
         for e in edges:
-            print(e.vertex1.sign,'->',e.vertex2.sign)
             vertex = e.vertex2
             if vertex in not_visited_vertexes:
                 if vertex == v0:
-                    print('here',vertex.sign, len(self.v_list)-1, len(path), len(not_visited_vertexes))
+                    # print('here',vertex.sign, len(self.v_list)-1, len(path), len(not_visited_vertexes))
                     if len(path) == len(self.v_list)-1 and len(not_visited_vertexes) == 1:
                         path.append(vertex.sign)
                         new_path = []
@@ -181,11 +180,8 @@ class Graph:
                             new_path.append(v)
                         self.gam_cycles.append(new_path)
                         return True
-                    # else:
-                    #     path.remove(vertex.sign)
 
                 else:
-                    print('add ', vertex.sign)
                     path.append(vertex.sign)
                     not_visited_vertexes.remove(vertex)
                     flag = self.dfs_gamilton(v0, vertex.edges,  path, not_visited_vertexes)
@@ -218,42 +214,8 @@ class Graph:
             return True
         else:
             return False
-
-
-
     # -----------------------------------------
 
-    # def dfs_center(self, v0, edges, not_checked_vertexes):
-    #     flag = False
-    #
-    #     for e in edges:
-    #         print(e.vertex1.sign, '->', e.vertex2.sign)
-    #         vertex = e.vertex2
-    #         if vertex in not_visited_vertexes:
-    #             if vertex == v0:
-    #                 print('here', vertex.sign, len(self.v_list) - 1, len(path), len(not_visited_vertexes))
-    #                 if len(path) == len(self.v_list) - 1 and len(not_visited_vertexes) == 1:
-    #                     path.append(vertex.sign)
-    #                     new_path = []
-    #                     new_path.append(v0.sign)
-    #                     for v in path:
-    #                         new_path.append(v)
-    #                     self.gam_cycles.append(new_path)
-    #                     return True
-    #                 # else:
-    #                 #     path.remove(vertex.sign)
-    #
-    #             else:
-    #                 print('add ', vertex.sign)
-    #                 path.append(vertex.sign)
-    #                 not_visited_vertexes.remove(vertex)
-    #                 flag = self.dfs_gamilton(v0, vertex.edges, path, not_visited_vertexes)
-    #                 if flag == False:
-    #                     path.remove(vertex.sign)
-    #                     not_visited_vertexes.append(vertex)
-    #                 else:
-    #                     return flag
-    #     return flag
 
     # центр - множество вершин
     def center(self):
@@ -573,36 +535,34 @@ class Graph:
 
     def dfs_min_path(self, v0, vertex, min_path_matrix, count):
         for i, value in enumerate(min_path_matrix[vertex.index]):
-            pass
-            # if i != v0.index:
-            #     #if value == 0:
-            #     for index, value
+            if i != v0.index:
 
 
 
+                #if value == 0:
+                if i > v0.index:
 
-                # if i > v0.index:
-                #     index = v0.index + 1
-                #     while index < len(min_path_matrix):
-                #         if min_path_matrix[index][i] != 0:
-                #             if min_path_matrix[v0.index][i] <= min_path_matrix[index][i] + 1 and min_path_matrix[v0.index][i] != 0:
-                #                 break
-                #             else:
-                #                 min_path_matrix[v0.index][i] = min_path_matrix[index][i] + 1
-                #                 break
-                #         else:
-                #             index += 1
-                # elif i < v0.index:
-                #     index = v0.index - 1
-                #     while index >= 0:
-                #         if min_path_matrix[index][i] != 0:
-                #             if min_path_matrix[v0.index][i] <= min_path_matrix[index][i] + 1 and min_path_matrix[v0.index][i] != 0:
-                #                 break
-                #             else:
-                #                 min_path_matrix[v0.index][i] = min_path_matrix[index][i] + 1
-                #                 break
-                #         else:
-                #             index -= 1
+                    index = v0.index + 1
+                    while index < len(min_path_matrix):
+                        if min_path_matrix[index][i] != 0:
+                            if min_path_matrix[v0.index][i] <= min_path_matrix[index][i] + 1 and min_path_matrix[v0.index][i] != 0:
+                                break
+                            else:
+                                min_path_matrix[v0.index][i] = min_path_matrix[index][i] + 1
+                                break
+                        else:
+                            index += 1
+                elif i < v0.index:
+                    index = v0.index - 1
+                    while index >= 0:
+                        if min_path_matrix[index][i] != 0:
+                            if min_path_matrix[v0.index][i] <= min_path_matrix[index][i] + 1 and min_path_matrix[v0.index][i] != 0:
+                                break
+                            else:
+                                min_path_matrix[v0.index][i] = min_path_matrix[index][i] + 1
+                                break
+                        else:
+                            index -= 1
 
                     # for list in min_path_matrix:
                     #     for other_index, other_value in enumerate(list):
@@ -620,7 +580,6 @@ class Graph:
             min_path_matrix.append(list)
 
         for vertex in self.v_list:
-            #(vertex.sign, vertex.index)
             self.dfs_min_path(vertex, vertex, min_path_matrix, 1)
 
 
@@ -635,3 +594,4 @@ class Graph:
 
     def find_center(self):
         for vertex in self.v_list:
+            pass

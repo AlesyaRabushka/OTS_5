@@ -24,7 +24,7 @@
                     text:''
                 Button:
                     text: 'add graph'
-                    on_press: root.add_graph()
+                    on_press: root.add_graph(root.return_change_g_name())
                 Button:
                     text: 'switch graph'
                     on_press: root.change_graph(root.return_change_g_name())
@@ -46,7 +46,7 @@
                     text: 'delete vertex'
                     on_press: root.remove_v(str(root.return_v_name()))
                 Button:
-                    text: 'vertexe degree'
+                    text: 'vertex degree'
                     on_press: root.print_v_degree(root.return_v_name())
 
             GridLayout:
@@ -99,7 +99,7 @@
         GridLayout:
             cols: 2
             GridLayout:
-                rows:4
+                rows:5
 
                 Button:
                     text: 'print graph information'
@@ -114,6 +114,10 @@
                 Button:
                     text: 'vertexes degree'
                     on_press: root.print_v_degree('')
+
+                Button:
+                    text: 'center, radius, diametr'
+                    on_press: root.find_c_r_d()
 
             Label:
                 id: matrix
