@@ -20,6 +20,10 @@ class MainScreen(MDScreen):
         self.new_name = ''
         self.new_vertex_name = ''
 
+        self.graph_center = 0
+        self.graph_radius = 0
+        self.diameter = 0
+
 
     def add_graph(self, name):
         flag = False
@@ -247,8 +251,16 @@ class MainScreen(MDScreen):
     def find_c_r_d(self):
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
-                #pass
                 g.min_path()
+                g.max_path()
+                self.graph_radius = g.graph_radius
+                self.diameter = g.diameter
+                self.graph_center = g.center_vertex
+
+                r = 'Radius: ' + str(self.graph_radius)
+                d = '\nDiameter: ' + str(self.diameter)
+                c = '\nCenter: ' + str(self.graph_center)
+                self.ids.matrix.text = r + d + c
 
 
     # CHANGE GRAPH NAME

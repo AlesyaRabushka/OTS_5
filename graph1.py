@@ -12,7 +12,7 @@ class Vertex:
         self.color = ''
         self.text = ''
 
-        self.ex = {}
+
         self.visited = []
         self.not_visited = self.degree
         self.connection_count = 1
@@ -22,6 +22,8 @@ class Vertex:
         self.connection_path = []
 
         self.min_path = {}
+        self.max_path = {}
+        self.extr = 0
 
 
         self.path_values = []
@@ -53,6 +55,14 @@ class Graph:
         self.gam_cycles = []
 
         self.min_path_matrix = []
+        # far vertex
+        self.far_vertex = 0
+        #center
+        self.center_vertex = 0
+        # graph_radius
+        self.graph_radius = 0
+        # diameter
+        self.diameter = 0
 
 
 
@@ -97,7 +107,6 @@ class Graph:
             path = []
             kol, path = self.dfs_connected(v, v, path)
             v.connection_path = path
-            print(v.sign, 'kolvo', kol, 'path-', path)
             if kol == len(self.v_list):
                 count += 1
                 return True
@@ -153,7 +162,6 @@ class Graph:
                         for v1 in not_connected_vertexes:
                             if v.sign == v1:
                                 self.add_e_oriented(vertex.sign, v.sign, '', 1)
-                                print(vertex.sign,'->', v.sign)
                                 if self.is_connected():
                                     return True
             return False
@@ -247,7 +255,6 @@ class Graph:
             new_list = []
             for i in range(0, count+1):
                 new_list.append(0)
-            print(self.v_amount)
             self.matrix.append(new_list)
 
     def remove_v(self, vertex):
@@ -342,7 +349,7 @@ class Graph:
         else:
             e = Edge(self, v1, v2, 2, name)
 
-            print(e.vertex1.sign,'->',e.vertex2.sign)
+            # print(e.vertex1.sign,'->',e.vertex2.sign)
             self.e_list.append(e)
             self.e_amount += 1
 
@@ -373,7 +380,7 @@ class Graph:
         for e in self.e_list:
             if e.sign == edge:
                 count += 1
-                print('edge', e.sign)
+                # print('edge', e.sign)
                 v1 = e.vertex1
                 v2 = e.vertex2
                 # print(v1.sign)
@@ -538,53 +545,17 @@ class Graph:
                     if min_path_matrix[index][i] != 0:
                         min_path_matrix[vertex.index][i] = min_path_matrix[index][i] + 1
 
-
-    def dfs_min_path(self, v0, vertex, min_path_matrix, count):
-        for i, value in enumerate(min_path_matrix[vertex.index]):
-            if i != v0.index:
-
-
-
-                #if value == 0:
-                if i > v0.index:
-
-                    index = v0.index + 1
-                    while index < len(min_path_matrix):
-                        if min_path_matrix[index][i] != 0:
-                            if min_path_matrix[v0.index][i] <= min_path_matrix[index][i] + 1 and min_path_matrix[v0.index][i] != 0:
-                                break
-                            else:
-                                min_path_matrix[v0.index][i] = min_path_matrix[index][i] + 1
-                                break
-                        else:
-                            index += 1
-                elif i < v0.index:
-                    index = v0.index - 1
-                    while index >= 0:
-                        if min_path_matrix[index][i] != 0:
-                            if min_path_matrix[v0.index][i] <= min_path_matrix[index][i] + 1 and min_path_matrix[v0.index][i] != 0:
-                                break
-                            else:
-                                min_path_matrix[v0.index][i] = min_path_matrix[index][i] + 1
-                                break
-                        else:
-                            index -= 1
-
-                    # for list in min_path_matrix:
-                    #     for other_index, other_value in enumerate(list):
-                    #         #if other_index != v0.index:
-                    #         if min_path_matrix[i][other_index] != 0:
-                    #             if min_path_matrix[v0.index][i] == 0:
-                    #                 min_path_matrix[v0.index][i] = 19
-
-
-    def dfs(self, v0, edges, not_visited_edges, count, path):
+    def dfs_min_path(self, v0, prev_vertex, edges, not_visited_edges, count, path):
         flag = False
+        if self.is_gamilton():
+            if count + 1 == len(self.v_list):
+                return True, count
 
 
         for e in edges:
-            vertex = e.vertex2
-            if e in not_visited_edges:
+            if e.type == 1:
+                vertex = e.vertex2
+                #if e in not_visited_edges:
 
                 count += 1
                 not_visited_edges.remove(e)
@@ -603,29 +574,195 @@ class Graph:
                     buf_edges.append(buf)
                 for e in vertex.edges:
                     not_visited_edges.append(e)
-
-                flag, k = self.dfs(v0, vertex.edges, not_visited_edges, count, path)
+                #visited += 1
+                flag, k = self.dfs_min_path(v0, vertex, vertex.edges, not_visited_edges, count, path)
                 if flag == False:
                     not_visited_edges = []
                     count -= 1
+                    #visited -= 1
                     for b in buf_edges:
                         not_visited_edges.append(b)
 
                     #count -= 1
                 else:
                     return flag, count
+            elif e.type == 2:
+                if e.vertex1 == prev_vertex:
+                    vertex = e.vertex2
+                    if e in not_visited_edges:
+
+                        count += 1
+                        not_visited_edges.remove(e)
+
+                        if path[vertex.sign] > count:
+                            path[vertex.sign] = count
+                        elif path[vertex.sign] == 0:
+                            path[vertex.sign] = count
+
+                        # print('from', e.vertex1.sign, ' to', e.vertex2.sign, path)
+                        if len(not_visited_edges) == 0:
+                            flag = True
+                            return flag, count
+                        buf_edges = []
+                        for buf in not_visited_edges:
+                            buf_edges.append(buf)
+                        for e in vertex.edges:
+                            not_visited_edges.append(e)
+
+                        flag, k = self.dfs_min_path(v0, vertex, vertex.edges, not_visited_edges, count, path)
+                        if flag == False:
+                            not_visited_edges = []
+                            count -= 1
+                            for b in buf_edges:
+                                not_visited_edges.append(b)
+
+                            # count -= 1
+                        else:
+                            return flag, count
+                elif e.vertex2 == prev_vertex:
+                    vertex = e.vertex1
+                    if e in not_visited_edges:
+
+                        count += 1
+                        not_visited_edges.remove(e)
+
+                        if path[vertex.sign] > count:
+                            path[vertex.sign] = count
+                        elif path[vertex.sign] == 0:
+                            path[vertex.sign] = count
+
+                        # print('from', e.vertex1.sign, ' to', e.vertex2.sign, path)
+                        if len(not_visited_edges) == 0:
+                            flag = True
+                            return flag, count
+                        buf_edges = []
+                        for buf in not_visited_edges:
+                            buf_edges.append(buf)
+                        for e in vertex.edges:
+                            not_visited_edges.append(e)
+
+                        flag, k = self.dfs_min_path(v0, vertex, vertex.edges, not_visited_edges, count, path)
+                        if flag == False:
+                            not_visited_edges = []
+                            count -= 1
+                            for b in buf_edges:
+                                not_visited_edges.append(b)
+
+                            # count -= 1
+                        else:
+                            return flag, count
+
         return flag, count
 
-    def path(self, p, u, v):
-        path = [u]
-        while u != v:
-            u = p[u][v]
-            path.append(u)
+    def dfs_max_path(self, v0, prev_vertex, edges, not_visited_edges, count, path):
+        flag = False
+        if self.is_gamilton():
+            if count + 1 == len(self.v_list):
+                return True, count
 
-        return path
+        for e in edges:
+            if e.type == 1:
+                vertex = e.vertex2
+                if e in not_visited_edges:
+
+                    count += 1
+                    not_visited_edges.remove(e)
+                    #visited += 1
+                    if path[vertex.sign] < count:
+                        path[vertex.sign] = count
+                    elif path[vertex.sign] == 0:
+                        path[vertex.sign] = count
+
+                    # print('from', e.vertex1.sign, ' to', e.vertex2.sign, path)
+                    if len(not_visited_edges) == 0:
+                        flag = True
+                        return flag, count
+                    buf_edges = []
+                    for buf in not_visited_edges:
+                        buf_edges.append(buf)
+                    for e in vertex.edges:
+                        not_visited_edges.append(e)
+
+                    flag, k = self.dfs_max_path(v0, vertex, vertex.edges, not_visited_edges, count, path)
+                    if flag == False:
+                        not_visited_edges = []
+                        count -= 1
+                        #visited -= 1
+                        for b in buf_edges:
+                            not_visited_edges.append(b)
+
+                        # count -= 1
+                    else:
+                        return flag, count
+            elif e.type == 2:
+                if e.vertex1 == prev_vertex:
+                    vertex = e.vertex2
+                    if e in not_visited_edges:
+
+                        count += 1
+                        not_visited_edges.remove(e)
+
+                        if path[vertex.sign] > count:
+                            path[vertex.sign] = count
+                        elif path[vertex.sign] == 0:
+                            path[vertex.sign] = count
+
+                        # print('from', e.vertex1.sign, ' to', e.vertex2.sign, path)
+                        if len(not_visited_edges) == 0:
+                            flag = True
+                            return flag, count
+                        buf_edges = []
+                        for buf in not_visited_edges:
+                            buf_edges.append(buf)
+                        for e in vertex.edges:
+                            not_visited_edges.append(e)
+
+                        flag, k = self.dfs_max_path(v0, vertex, vertex.edges, not_visited_edges, count, path)
+                        if flag == False:
+                            not_visited_edges = []
+                            count -= 1
+                            for b in buf_edges:
+                                not_visited_edges.append(b)
+
+                            # count -= 1
+                        else:
+                            return flag, count
+                elif e.vertex2 == prev_vertex:
+                    vertex = e.vertex1
+                    if e in not_visited_edges:
+
+                        count += 1
+                        not_visited_edges.remove(e)
+
+                        if path[vertex.sign] > count:
+                            path[vertex.sign] = count
+                        elif path[vertex.sign] == 0:
+                            path[vertex.sign] = count
+
+                        # print('from', e.vertex1.sign, ' to', e.vertex2.sign, path)
+                        if len(not_visited_edges) == 0:
+                            flag = True
+                            return flag, count
+                        buf_edges = []
+                        for buf in not_visited_edges:
+                            buf_edges.append(buf)
+                        for e in vertex.edges:
+                            not_visited_edges.append(e)
+
+                        flag, k = self.dfs_max_path(v0, vertex, vertex.edges, not_visited_edges, count, path)
+                        if flag == False:
+                            not_visited_edges = []
+                            count -= 1
+                            for b in buf_edges:
+                                not_visited_edges.append(b)
+
+                            # count -= 1
+                        else:
+                            return flag, count
+
+        return flag, count
 
     def min_path(self):
-
         for vertex in self.v_list:
             path = {}
             not_visited_edges = []
@@ -636,68 +773,107 @@ class Graph:
                 path[v.sign] = 0
 
             count = 0
-            print(vertex.sign)
-            f, count = self.dfs(vertex, vertex.edges, not_visited_edges, count, path)
+            print('-----------------',vertex.sign)
+            f, count = self.dfs_min_path(vertex, vertex, vertex.edges, not_visited_edges, count, path)
             vertex.min_path = path
 
         for v in self.v_list:
             print(v.sign, v.min_path)
-            # for l in min_path_matrix:
-            #     print(l)
 
-        # for list in self.matrix:
-        #     self.min_path_matrix.append(list)
-        # n = len(self.v_list)
-        # p = [[v for v in range(n)] for u in range(n)]
-        #
-        # for k in range(n):
-        #     for i in range(n):
-        #         for j in range(n):
-        #             d = self.min_path_matrix[i][k] + self.min_path_matrix[k][j]
-        #
-        #             if self.min_path_matrix[i][j] > d:
-        #                 self.min_path_matrix[i][j] = d
-        #                 p[i][j] = k
-        # for v in self.v_list:
-        #     print(v.sign)
-        #     for i in range(len(self.v_list)-1, -1, -1):
-        #         if i != v.index:
-        #             print(self.path(p, i, v.index))
-        #print(self.path(p, len(self.v_list)-1, 0))
+        self.find_extr()
 
 
-        # for list in self.matrix:
-        #     self.min_path_matrix.append(list)
-        #
-        # for vertex in self.v_list:
-        #     not_visited_edges = []
-        #     for e in self.e_list:
-        #         not_visited_edges.append(e)
-        #
-        #     #not_visited_vertexes.append(vertex)
-        #
-        #     count = 0
-        #     f, count = self.dfs(vertex, vertex, vertex.edges, not_visited_edges, count, self.min_path_matrix)
-        #     if f:
-        #         print('it works',count)
-        #         # for l in min_path_matrix:
-        #         #     print(l)
-        #
-        # for l in self.min_path_matrix:
-        #     print(l)
-        # print('------------')
-        # self.print_matrix()
-            #self.dfs_min_path(vertex, vertex, min_path_matrix, 1)
+    # FAR VERTEX and graph_radius
+    def find_extr(self):
+        max_list = []
+        for i in range(len(self.v_list)):
+            max_list.append(0)
 
-
-            # self.find_min_path_matrix(vertex, vertex, min_path_matrix)
-            # if vertex.index == len(self.v_list) - 1:
-            #     self.check_last_vertex(vertex, min_path_matrix)
-        # for i in range(len(self.v_list)-1, -1, -1):
-        #     self.find_min_path_matrix(self.v_list[i],self.v_list[i], min_path_matrix)
-
-
-
-    def find_center(self):
         for vertex in self.v_list:
-            pass
+            for i, value in enumerate(vertex.min_path):
+                max_list[i] += vertex.min_path[value]
+
+        far_vertex_search = 0
+        far_vertex_index = 0
+        for i, value in enumerate(max_list):
+            if value > far_vertex_search:
+                far_vertex_search = value
+                far_vertex_index = i # far vertex index
+
+
+        print('max', max_list, 'far_vertex index', far_vertex_index)
+
+        # find FAR VERTEX
+        for v in self.v_list:
+            if v.index == far_vertex_index:
+                self.far_vertex = v
+                print('far vertex', self.far_vertex.sign)
+
+                # set the len to the far vertex for each vertex
+                for v in self.v_list:
+                    for far in v.min_path:
+                        if far == self.far_vertex.sign:
+                            print('far', far)
+                            v.extr = v.min_path[self.far_vertex.sign]
+
+        # find graph_radius
+        graph_radius = 20
+        for i in max_list:
+            if i != 0:
+                if i < graph_radius:
+                    graph_radius = i  # far vertex index
+        if self.is_gamilton():
+            self.graph_radius = graph_radius - 1
+        else:
+            self.graph_radius = graph_radius
+
+        # self.graph_radius = graph_radius
+        print('graph_radius', self.graph_radius)
+
+        for v in self.v_list:
+            if v.extr == self.graph_radius:
+                self.center_vertex = v.sign
+
+
+        for v in self.v_list:
+            print(v.extr)
+
+
+
+    def max_path(self):
+        for vertex in self.v_list:
+            path = {}
+            not_visited_edges = []
+            for e in self.e_list:
+                not_visited_edges.append(e)
+
+            for v in self.v_list:
+                path[v.sign] = 0
+
+            count = 0
+
+            f, count = self.dfs_max_path(vertex, vertex, vertex.edges, not_visited_edges, count, path)
+            vertex.max_path = path
+        print('max path')
+        for v in self.v_list:
+            print(v.sign, v.max_path)
+
+        self.find_diameter()
+
+    def find_diameter(self):
+        max_list = []
+        for i in range(len(self.v_list)):
+            max_list.append(0)
+
+        for vertex in self.v_list:
+            for i, value in enumerate(vertex.max_path):
+                if max_list[i] < vertex.max_path[value]:
+                    max_list[i] = vertex.max_path[value]
+
+        print('max_list',max_list)
+        diameter = 0
+        for i in max_list:
+            if i > diameter:
+                diameter = i  # diameter
+        self.diameter = diameter
+        print('diameter', diameter)
