@@ -18,6 +18,7 @@ class MainScreen(MDScreen):
         self.vertex2_name = ''
 
         self.new_name = ''
+        self.new_vertex_name = ''
 
 
     def add_graph(self, name):
@@ -39,7 +40,7 @@ class MainScreen(MDScreen):
 
     def add_v(self, name):
         if len(self.graphs) == 0:
-            self.add_graph()
+            self.add_graph('')
             for g in self.graphs:
                 # g.add_v(name)
                 if self.ids.graph_name.text == g.name:
@@ -56,6 +57,28 @@ class MainScreen(MDScreen):
                         self.ids.matrix.text = 'The vertex with the same name is already existed'
                     else:
                         g.add_v(name)
+
+    def set_new_v_name(self, name, new_name):
+        for g in self.graphs:
+            if g.name == self.ids.graph_name.text:
+                flag = False
+                vertex = None
+                count = 0
+                for v in g.v_list:
+                    if v.sign == new_name:
+                        count += 1
+
+                if count > 0:
+                    self.ids.matrix.text = 'The vertex with the same name is already existed'
+                else:
+                    for v in g.v_list:
+                        if v.sign == name:
+                            count += 1
+                            v.sign = new_name
+                            self.ids.matrix.text = 'The vertex has been successfully renamed'
+                            break
+                #if flag:
+
 
     def remove_v(self, name):
         for g in self.graphs:
@@ -106,12 +129,16 @@ class MainScreen(MDScreen):
 
     def v_name(self, name):
         self.vertex_name = name
+    def new_v_name(self, name):
+        self.new_vertex_name = name
     def v_color(self, color):
         self.vertex_color = color
     def return_v_color(self):
         return self.vertex_color
     def return_v_name(self):
         return self.vertex_name
+    def return_new_v_name(self):
+        return self.new_vertex_name
     # vertexes to create an edge
     def e_v_name1(self, name):
         self.vertex1_name = name
@@ -135,6 +162,7 @@ class MainScreen(MDScreen):
     def print_graph_info(self):
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
+                print('matrix')
                 g.print_matrix()
                 matrix = ''
                 for list in g.matrix:
@@ -219,6 +247,7 @@ class MainScreen(MDScreen):
     def find_c_r_d(self):
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
+                #pass
                 g.min_path()
 
 

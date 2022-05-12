@@ -35,10 +35,13 @@
         GridLayout:
             cols: 5
             GridLayout:
-                rows: 4
+                rows: 5
                 Button:
                     text: 'add vertex'
                     on_press: root.add_v(str(root.return_v_name()))
+                Button:
+                    text: 'rename vertex'
+                    on_press: root.set_new_v_name(root.return_v_name(), root.return_new_v_name())
                 Button:
                     text: 'add vertex color'
                     on_press: root.set_v_color(root.return_v_name(),root.return_v_color())
@@ -50,13 +53,17 @@
                     on_press: root.print_v_degree(root.return_v_name())
 
             GridLayout:
-                rows:2
+                rows:3
                 TextInput:
                     hint_text: 'vertex name'
                     on_text: root.v_name(self.text)
                 TextInput:
+                    hint_text: 'new vertex name'
+                    on_text: root.new_v_name(self.text)
+                TextInput:
                     hint_text: 'vertex color'
                     on_text: root.v_color(self.text)
+
 
             GridLayout:
                 rows: 4

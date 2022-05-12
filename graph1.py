@@ -21,6 +21,8 @@ class Vertex:
 
         self.connection_path = []
 
+        self.min_path = {}
+
 
         self.path_values = []
 
@@ -200,9 +202,9 @@ class Graph:
             not_visited_vertexes = []
 
             print('-------vertex', v.sign)
-            for e in self.v_list:
-                if e != v:
-                    not_visited_vertexes.append(e)
+            for vertex in self.v_list:
+                if vertex != v:
+                    not_visited_vertexes.append(vertex)
                 #print(e.type,':',e.vertex1.sign, '->', e.vertex2.sign)
             not_visited_vertexes.append(v)
             path = []
@@ -389,6 +391,7 @@ class Graph:
                                         list[i] -= 1
                                         v1.edges.remove(e)
                                         v1.degree.remove(v2)
+                                        v1.degrees -= 1
 
 
                         elif v2.index == count:
@@ -398,6 +401,7 @@ class Graph:
                                         list[i] -= 1
                                         v2.edges.remove(e)
                                         v2.degree.remove(v1)
+                                        v2.degrees -= 1
 
                     #self.e_list.remove(e)
 
@@ -411,6 +415,8 @@ class Graph:
                                     v1.edges.remove(e)
                                     #v2.edges.remove(e)
                                     v1.degree.remove(v2)
+                                    v1.degrees -= 1
+                                    v2.degrees -= 1
                                     #v2.degree.remove(v1)
                 self.e_list.remove(e)
 
@@ -572,15 +578,116 @@ class Graph:
                     #                 min_path_matrix[v0.index][i] = 19
 
 
+    def dfs(self, v0, edges, not_visited_edges, count, path):
+        flag = False
+
+
+        for e in edges:
+            vertex = e.vertex2
+            if e in not_visited_edges:
+
+                count += 1
+                not_visited_edges.remove(e)
+
+                if path[vertex.sign] > count:
+                    path[vertex.sign] = count
+                elif path[vertex.sign] == 0:
+                    path[vertex.sign] = count
+
+                print('from', e.vertex1.sign, ' to', e.vertex2.sign, path)
+                if len(not_visited_edges) == 0:
+                    flag = True
+                    return flag, count
+                buf_edges = []
+                for buf in not_visited_edges:
+                    buf_edges.append(buf)
+                for e in vertex.edges:
+                    not_visited_edges.append(e)
+
+                flag, k = self.dfs(v0, vertex.edges, not_visited_edges, count, path)
+                if flag == False:
+                    not_visited_edges = []
+                    count -= 1
+                    for b in buf_edges:
+                        not_visited_edges.append(b)
+
+                    #count -= 1
+                else:
+                    return flag, count
+        return flag, count
+
+    def path(self, p, u, v):
+        path = [u]
+        while u != v:
+            u = p[u][v]
+            path.append(u)
+
+        return path
 
     def min_path(self):
-        min_path_matrix = []
-
-        for list in self.matrix:
-            min_path_matrix.append(list)
 
         for vertex in self.v_list:
-            self.dfs_min_path(vertex, vertex, min_path_matrix, 1)
+            path = {}
+            not_visited_edges = []
+            for e in self.e_list:
+                not_visited_edges.append(e)
+
+            for v in self.v_list:
+                path[v.sign] = 0
+
+            count = 0
+            print(vertex.sign)
+            f, count = self.dfs(vertex, vertex.edges, not_visited_edges, count, path)
+            vertex.min_path = path
+
+        for v in self.v_list:
+            print(v.sign, v.min_path)
+            # for l in min_path_matrix:
+            #     print(l)
+
+        # for list in self.matrix:
+        #     self.min_path_matrix.append(list)
+        # n = len(self.v_list)
+        # p = [[v for v in range(n)] for u in range(n)]
+        #
+        # for k in range(n):
+        #     for i in range(n):
+        #         for j in range(n):
+        #             d = self.min_path_matrix[i][k] + self.min_path_matrix[k][j]
+        #
+        #             if self.min_path_matrix[i][j] > d:
+        #                 self.min_path_matrix[i][j] = d
+        #                 p[i][j] = k
+        # for v in self.v_list:
+        #     print(v.sign)
+        #     for i in range(len(self.v_list)-1, -1, -1):
+        #         if i != v.index:
+        #             print(self.path(p, i, v.index))
+        #print(self.path(p, len(self.v_list)-1, 0))
+
+
+        # for list in self.matrix:
+        #     self.min_path_matrix.append(list)
+        #
+        # for vertex in self.v_list:
+        #     not_visited_edges = []
+        #     for e in self.e_list:
+        #         not_visited_edges.append(e)
+        #
+        #     #not_visited_vertexes.append(vertex)
+        #
+        #     count = 0
+        #     f, count = self.dfs(vertex, vertex, vertex.edges, not_visited_edges, count, self.min_path_matrix)
+        #     if f:
+        #         print('it works',count)
+        #         # for l in min_path_matrix:
+        #         #     print(l)
+        #
+        # for l in self.min_path_matrix:
+        #     print(l)
+        # print('------------')
+        # self.print_matrix()
+            #self.dfs_min_path(vertex, vertex, min_path_matrix, 1)
 
 
             # self.find_min_path_matrix(vertex, vertex, min_path_matrix)
@@ -588,8 +695,7 @@ class Graph:
             #     self.check_last_vertex(vertex, min_path_matrix)
         # for i in range(len(self.v_list)-1, -1, -1):
         #     self.find_min_path_matrix(self.v_list[i],self.v_list[i], min_path_matrix)
-        for list in min_path_matrix:
-            print(list)
+
 
 
     def find_center(self):
