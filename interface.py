@@ -24,6 +24,8 @@ class MainScreen(MDScreen):
         self.graph_radius = 0
         self.diameter = 0
 
+        self.vertex_text = ''
+
 
     def add_graph(self, name):
         flag = False
@@ -41,6 +43,16 @@ class MainScreen(MDScreen):
                 g.name = name
             self.graphs.append(g)
             self.ids.graph_name.text = g.name
+
+    def delete_graph(self):
+        flag = False
+        for g in self.graphs:
+            if g.name == self.ids.graph_name.text:
+                self.graphs.remove(g)
+                flag = True
+
+        if not flag:
+            self.ids.matrix.text = 'No graph has been found'
 
     def add_v(self, name):
         if len(self.graphs) == 0:
@@ -162,6 +174,19 @@ class MainScreen(MDScreen):
     def return_e_name(self):
         return self.edge_name
 
+    # set VERTEX TEXT
+    def v_text(self, text):
+        self.vertex_text = text
+    def return_v_text(self):
+        return self.vertex_text
+    def set_v_text(self, vertex, text):
+        for g in self.graphs:
+            if g.name == self.ids.graph_name.text:
+                for v in g.v_list:
+                    if v.sign == vertex:
+                        v.text = text
+
+
 
     def print_graph_info(self):
         for g in self.graphs:
@@ -182,15 +207,7 @@ class MainScreen(MDScreen):
                 vertex_amount = '\nVertexes: ' + str(g.v_amount)
                 edge_amount = '\nEdges: ' + str(g.e_amount)
 
-                colors = ''
-                for v in g.v_list:
-                    if v.color != '':
-                        colors += '\n' + str(v.sign) + ' color: ' + str(v.color)
-                for e in g.e_list:
-                    if e.color != '':
-                        colors += '\n' + str(e.sign) + ' color: ' + str(e.color)
-
-                self.ids.matrix.text = matrix + vertex_amount + edge_amount + connected + colors
+                self.ids.matrix.text = matrix + vertex_amount + edge_amount + connected
 
 
     def print_hamilton_cycles(self):
@@ -224,28 +241,62 @@ class MainScreen(MDScreen):
                     self.ids.matrix.text = 'Graph is connected now'
                     g.make_connected()
 
-    def print_v_degree(self, vertex):
+    def print_v_info(self, vertex):
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
-                degrees = ''
+
+
+                flag = False
                 if vertex != '':
                     for v in g.v_list:
-                        if v.sign == vertex:
-                            degrees = vertex + ':' + str(v.degrees)
+                        if flag:
+                            break
+                        else:
+                            degrees = ''
+                            colors = ''
+                            text = ''
+                            if v.sign == vertex:
+                                degrees = vertex + ' - d: ' + str(v.degrees)
+                                if v.color != '':
+                                    colors = ' color: ' + str(v.color)
+                                if v.text != '':
+                                    text = ' text: ' + str(v.text)
+                                flag = True
+                                self.ids.matrix.text = degrees + colors + text
 
 
                 else:
+                    vertexes_info = ''
                     for v in g.v_list:
-                        degrees += v.sign + ': ' + str(v.degrees) + '\n'
+                        degrees = ''
+                        colors = ''
+                        text = ''
+
+                        degrees = v.sign + ' d : ' + str(v.degrees)
+                        if v.color != '':
+                            colors = ' color: ' + str(v.color)
+                        if v.text != '':
+                            text = ' text: ' + str(v.text)
+                        vertex_info = degrees + colors + text
+                        vertexes_info += vertex_info + '\n'
 
 
-                self.ids.matrix.text = degrees
+                    # for e in g.e_list:
+                    #     if e.color != '':
+                    #         colors += '\n' + str(e.sign) + ' color: ' + str(e.color)
+
+                    self.ids.matrix.text = vertexes_info
 
 
     def change_graph(self, new_graph_name):
+        flag = False
         for g in self.graphs:
             if g.name == self.new_name:
                 self.ids.graph_name.text = new_graph_name
+                flag = True
+
+        if not flag:
+            self.ids.matrix.text = 'No graph has been found'
 
 
     def find_c_r_d(self):
@@ -283,5 +334,20 @@ class MainScreen(MDScreen):
                     print(e.sign, edge)
                     if e.sign == edge:
                         e.color = color
+
+
+    def dekart_mutiplication(self, graph):
+        for g in self.graphs:
+            if g.name == self.ids.graph_name.text:
+                for g2 in self.graphs:
+                    if g2.name == graph:
+                        dekart_edges = []
+                        dekart_edges = g.dekart_multiplication(g2)
+                        string = ''
+                        string += 'Dekart multiplication\n'
+                        for edge in dekart_edges:
+                            string += edge[0] + edge[1] + '->' + edge[2] + edge[3] + '\n'
+
+                        self.ids.matrix.text = string
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "graph.kv"))

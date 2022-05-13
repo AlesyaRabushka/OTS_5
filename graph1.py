@@ -484,66 +484,6 @@ class Graph:
                         v1.edges.append(e2)
                         v2.edges.append(e2)
 
-    def find_min_path_matrix(self, v0, vertex, min_path_matrix):
-        for i, value in enumerate(self.matrix[vertex.index]):
-
-            #print(value)
-            if value == 0:
-                index = vertex.index - 1
-                if i != vertex.index:
-                    while index >= 0:
-                        if min_path_matrix[index][i] != 0:
-                            if min_path_matrix[vertex.index][i] < min_path_matrix[index][i] + 1:
-                                pass
-                            else:
-                                min_path_matrix[vertex.index][i] = min_path_matrix[index][i] + 1
-                        index -= 1
-
-            elif value >= 1:
-                index = vertex.index - 1
-                count = 2
-                if i != vertex.index:
-                    # нужно ведь и самаго него изменить
-                    # можео проверить, что он последний в графе
-
-                    # нужно проверять направление дуг?
-                    while index >= 0:
-                        if index != i:
-                            # не корректно
-                            # потребуется еще доп проверка
-                            if min_path_matrix[index][i] > count or min_path_matrix[index][i] == 0:
-                                min_path_matrix[index][i] = count
-                                index -= 1
-                                count += 1
-                            else:
-                                index -= 1
-                        else:
-                            index -= 1
-                            count += 1
-
-
-            # для корректного отображения остальных [], но не ткущего, нужна езе проверка
-            # if vertex.index == len(self.v_list) - 1:
-            #     for i in range(0, len(self.v_list)-1):
-            #         print('vert',self.v_list[i].sign)
-            #         self.find_min_path_matrix(self.v_list[i], self.v_list[i], min_path_matrix)
-
-
-        #
-    def check_last_vertex(self, vertex, min_path_matrix):
-        last = []
-        index = 0
-        for i in min_path_matrix[vertex.index]:
-            last.append(i)
-
-
-        for i, value in enumerate(min_path_matrix[vertex.index]):
-            if value == 1:
-                index = i
-            if value == 0:
-                if i != vertex.index:
-                    if min_path_matrix[index][i] != 0:
-                        min_path_matrix[vertex.index][i] = min_path_matrix[index][i] + 1
 
     def dfs_min_path(self, v0, prev_vertex, edges, not_visited_edges, count, path):
         flag = False
@@ -877,3 +817,71 @@ class Graph:
                 diameter = i  # diameter
         self.diameter = diameter
         print('diameter', diameter)
+
+
+# ---------------------- MULTIPLICATION -------------------------
+
+    def dekart_multiplication(self, graph):
+        dekart_matrix = []
+        dekart_v_list = []
+        dekart_edges = []
+
+        v_amount = 0
+        for v1 in self.v_list:
+            for v2 in graph.v_list:
+                new_v = (v1, v2)
+                v_amount += 1
+                dekart_v_list.append(new_v)
+
+        # for v1 in graph.v_list:
+        #     for v2 in self.v_list:
+        #         new_v = (v1, v2)
+        #         v_amount += 1
+        #         dekart_v_list.append(new_v)
+
+        print(v_amount)
+        for i in range(v_amount):
+            if len(dekart_matrix) == 0:
+                dekart_matrix.append([0])
+            else:
+                count = 0
+                for list in dekart_matrix:
+                    list.append(0)
+                    count += 1
+                # add new vertex to the matrix
+                new_list = []
+                for i in range(0, count + 1):
+                    new_list.append(0)
+                dekart_matrix.append(new_list)
+
+        print('dekart')
+        for list in dekart_matrix:
+            print(list)
+
+        for index, pare in enumerate(dekart_v_list):
+            #print(pare[0], pare[1])
+            v1_next = self.find_next_v(pare[0])
+            v2_next = self.find_next_v(pare[1])
+
+            for new_index, new_pare in enumerate(dekart_v_list):
+                if new_pare[0] == v1_next and new_pare[1] == v2_next:
+                    print('find for', pare[0].sign, pare[1].sign,'-', new_pare[0].sign, new_pare[1].sign)
+                    for m_index, list in enumerate(dekart_matrix):
+                        if m_index == index:
+                            for i in range(len(list)):
+                                if i == new_index:
+                                    list[i] += 1
+                                    dekart_edges.append([pare[0].sign, pare[1].sign, new_pare[0].sign, new_pare[1].sign])
+
+        print('dekart')
+        for list in dekart_matrix:
+            print(list)
+
+        return dekart_edges
+
+
+
+    def find_next_v(self, vertex):
+        for e in vertex.edges:
+            if e.vertex1 == vertex:
+                return e.vertex2

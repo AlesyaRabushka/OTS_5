@@ -4,38 +4,46 @@
         adaptive_size: True
 
         GridLayout:
-            cols: 2
-
-
+            rows: 2
 
             GridLayout:
-                cols:2
-                rows:2
+                cols:5
+
                 Label:
                     background_normal:''
-                    background_color: (0,0,1,1)
+                    background_color: (0,102/255,204/255)
                     canvas.before:
                         Color:
-                            rgba: self.background_color
+                            rgb: self.background_color
                         Rectangle:
                             size: self.size
                             pos: self.pos
                     id: graph_name
-                    text:''
+                    text:'Graph name'
                 Button:
                     text: 'add graph'
                     on_press: root.add_graph(root.return_change_g_name())
                 Button:
                     text: 'switch graph'
                     on_press: root.change_graph(root.return_change_g_name())
+                Button:
+                    text: 'delete graph'
+                    on_press: root.delete_graph()
                 TextInput:
                     hint_text:  'graph name'
                     on_text: root.change_g_name(self.text)
 
+            GridLayout:
+                cols: 2
+                Button:
+                    text: 'dekart multiplication'
+                    on_press: root.dekart_mutiplication(root.return_change_g_name())
+
         GridLayout:
             cols: 5
+
             GridLayout:
-                rows: 5
+                rows: 6
                 Button:
                     text: 'add vertex'
                     on_press: root.add_v(str(root.return_v_name()))
@@ -49,11 +57,14 @@
                     text: 'delete vertex'
                     on_press: root.remove_v(str(root.return_v_name()))
                 Button:
-                    text: 'vertex degree'
-                    on_press: root.print_v_degree(root.return_v_name())
+                    text: 'vertex info'
+                    on_press: root.print_v_info(root.return_v_name())
+                Button:
+                    text: 'add vertex text'
+                    on_press: root.set_v_text(root.return_v_name(), root.return_v_text())
 
             GridLayout:
-                rows:3
+                rows:4
                 TextInput:
                     hint_text: 'vertex name'
                     on_text: root.v_name(self.text)
@@ -63,6 +74,9 @@
                 TextInput:
                     hint_text: 'vertex color'
                     on_text: root.v_color(self.text)
+                TextInput:
+                    hint_text: 'vertex text'
+                    on_text: root.v_text(self.text)
 
 
             GridLayout:
@@ -129,13 +143,13 @@
             Label:
                 id: matrix
                 background_normal:''
-                background_color: (0,0,1,1)
+                background_color: (0,102/255,204/255, 1)
                 canvas.before:
                     Color:
                         rgba: self.background_color
                     Rectangle:
                         size: self.size
                         pos: self.pos
-                text: '[color=#000000]matrix[/color]'
-                markup: True
+                text: 'Graph information'
+
 
