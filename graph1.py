@@ -259,16 +259,18 @@ class Graph:
             self.matrix.append(new_list)
 
     def remove_v(self, vertex):
-        del_v = None
+
         for v in self.v_list:
             if v.sign == vertex:
                 del_v = v
                 # remove all EDGES
-                for other_v in v.degree:
-                    other_v.degree.remove(v)
-                    e = self.search_e(v, other_v)
-                    if e != None:
-                        other_v.edges.remove(e)
+                if len(v.degree) != 0:
+                    for other_v in v.degree:
+                        if v in other_v.degree:
+                            other_v.degree.remove(v)
+                            e = self.search_e(v, other_v)
+                            if e != None:
+                                other_v.edges.remove(e)
 
         for count, list in enumerate(self.matrix):
             list.pop(del_v.index)
