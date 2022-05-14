@@ -31,6 +31,7 @@ class MainScreen(MDScreen):
         flag = False
         for graph in self.graphs:
             if graph.name == name:
+                print(graph.name, name)
                 flag = True
         if flag:
             self.ids.matrix.text = 'The graph with the same name is already existed'
@@ -271,7 +272,6 @@ class MainScreen(MDScreen):
                         degrees = ''
                         colors = ''
                         text = ''
-
                         degrees = v.sign + ' d : ' + str(v.degrees)
                         if v.color != '':
                             colors = ' color: ' + str(v.color)
@@ -280,10 +280,6 @@ class MainScreen(MDScreen):
                         vertex_info = degrees + colors + text
                         vertexes_info += vertex_info + '\n'
 
-
-                    # for e in g.e_list:
-                    #     if e.color != '':
-                    #         colors += '\n' + str(e.sign) + ' color: ' + str(e.color)
 
                     self.ids.matrix.text = vertexes_info
 
@@ -339,15 +335,32 @@ class MainScreen(MDScreen):
     def dekart_mutiplication(self, graph):
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
-                for g2 in self.graphs:
-                    if g2.name == graph:
-                        dekart_edges = []
-                        dekart_edges = g.dekart_multiplication(g2)
-                        string = ''
-                        string += 'Dekart multiplication\n'
-                        for edge in dekart_edges:
-                            string += edge[0] + edge[1] + '->' + edge[2] + edge[3] + '\n'
+                graph1 = g
+                break
 
-                        self.ids.matrix.text = string
+        for g2 in self.graphs:
+            if g2.name == graph:
+                graph2 = g2
+                break
+
+        if graph1 == None or graph2 == None:
+            self.ids.matrix.text = 'No graph has been found'
+        else:
+            new_name = graph1.name + graph2.name
+            self.add_graph(new_name)
+            print('added new graph ', new_name)
+            for dekart_graph in self.graphs:
+                if dekart_graph.name == new_name:
+                    dekart_graph.type = 1
+                    dekart_edges = []
+                    print('start dekart')
+                    dekart_edges = graph1.dekart_multiplication(graph2, dekart_graph)
+                    string = ''
+                    string += 'Dekart multiplication\n'
+                    for e in dekart_graph.e_list:
+                        string += e.vertex1.sign + '->' + e.vertex2.sign + '\n'
+
+                    self.ids.matrix.text = string
+                    break
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "graph.kv"))

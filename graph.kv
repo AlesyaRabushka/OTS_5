@@ -51,6 +51,9 @@
                     text: 'rename vertex'
                     on_press: root.set_new_v_name(root.return_v_name(), root.return_new_v_name())
                 Button:
+                    text: 'add vertex text'
+                    on_press: root.set_v_text(root.return_v_name(), root.return_v_text())
+                Button:
                     text: 'add vertex color'
                     on_press: root.set_v_color(root.return_v_name(),root.return_v_color())
                 Button:
@@ -59,9 +62,7 @@
                 Button:
                     text: 'vertex info'
                     on_press: root.print_v_info(root.return_v_name())
-                Button:
-                    text: 'add vertex text'
-                    on_press: root.set_v_text(root.return_v_name(), root.return_v_text())
+
 
             GridLayout:
                 rows:4
@@ -133,8 +134,8 @@
                     text: 'make connected'
                     on_press: root.make_connected()
                 Button:
-                    text: 'vertexes degree'
-                    on_press: root.print_v_degree('')
+                    text: 'vertexes info'
+                    on_press: root.print_v_info('')
 
                 Button:
                     text: 'center, radius, diametr'

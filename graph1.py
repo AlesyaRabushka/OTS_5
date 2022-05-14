@@ -44,6 +44,7 @@ class Edge:
 class Graph:
     def __init__(self):
         self.name = ''
+        self.type = 0
         self.v_list = []
         self.e_list = []
         self.matrix = []
@@ -308,7 +309,27 @@ class Graph:
                 sign = 'e' + str(self.e_amount)
             else:
                 sign = name
-            if type == 1:
+
+            if type == 11:
+                e = Edge(self, v1, v2, 1, sign)
+                self.e_list.append(e)
+                v1.degree.append(v2)
+                v1.edges.append(e)
+                v1.degrees += 1
+                v2.degrees += 1
+
+                for count, list in enumerate(self.matrix):
+                    if v1.index == count:
+                        for i in range(0, len(list)):
+                            if i == v2.index:
+                                list[i] += 1
+                                break
+                return True
+
+
+
+
+            elif type == 1:
                 e = Edge(self, v1, v2, 1, sign)
                 self.e_list.append(e)
                 v1.degree.append(v2)
@@ -821,67 +842,57 @@ class Graph:
 
 # ---------------------- MULTIPLICATION -------------------------
 
-    def dekart_multiplication(self, graph):
-        dekart_matrix = []
-        dekart_v_list = []
-        dekart_edges = []
+    def dekart_multiplication(self, graph, dekart_graph):
 
-        v_amount = 0
         for v1 in self.v_list:
             for v2 in graph.v_list:
-                new_v = (v1, v2)
-                v_amount += 1
-                dekart_v_list.append(new_v)
+                new_v = v1.sign + v2.sign
+                dekart_graph.add_v(new_v)
+        for i in dekart_graph.v_list:
+            print(i.sign)
 
-        # for v1 in graph.v_list:
-        #     for v2 in self.v_list:
-        #         new_v = (v1, v2)
-        #         v_amount += 1
-        #         dekart_v_list.append(new_v)
-
-        print(v_amount)
-        for i in range(v_amount):
-            if len(dekart_matrix) == 0:
-                dekart_matrix.append([0])
-            else:
-                count = 0
-                for list in dekart_matrix:
-                    list.append(0)
-                    count += 1
-                # add new vertex to the matrix
-                new_list = []
-                for i in range(0, count + 1):
-                    new_list.append(0)
-                dekart_matrix.append(new_list)
+        print(dekart_graph.v_amount)
 
         print('dekart')
-        for list in dekart_matrix:
+        for list in dekart_graph.matrix:
             print(list)
 
-        for index, pare in enumerate(dekart_v_list):
-            #print(pare[0], pare[1])
-            v1_next = self.find_next_v(pare[0])
-            v2_next = self.find_next_v(pare[1])
+        for index, pare in enumerate(dekart_graph.v_list):
 
-            for new_index, new_pare in enumerate(dekart_v_list):
-                if new_pare[0] == v1_next and new_pare[1] == v2_next:
-                    print('find for', pare[0].sign, pare[1].sign,'-', new_pare[0].sign, new_pare[1].sign)
-                    for m_index, list in enumerate(dekart_matrix):
-                        if m_index == index:
-                            for i in range(len(list)):
-                                if i == new_index:
-                                    list[i] += 1
-                                    dekart_edges.append([pare[0].sign, pare[1].sign, new_pare[0].sign, new_pare[1].sign])
+            first = pare.sign[0] + pare.sign[1]
+            second = pare.sign[2] + pare.sign[3]
+            print(first, second)
+            v1_next = self.find_next_v(self, first)
+            v2_next = self.find_next_v(graph, second)
+            if v1_next != None and v2_next != None:
+                for new_index, new_pare in enumerate(dekart_graph.v_list):
+                    new_first = new_pare.sign[0] + new_pare.sign[1]
+                    new_second = new_pare.sign[2] + new_pare.sign[3]
+                    if new_first != None and new_second != None:
+                        if new_first == v1_next.sign and new_second == v2_next.sign:
+                            print('find for', first, second,'-', new_first, new_second)
+                            for m_index, list in enumerate(dekart_graph.matrix):
+                                if m_index == index:
+                                    for i in range(len(list)):
+                                        if i == new_index:
+                                            #list[i] += 1
+                                            new_v_1 = first + second
+                                            new_v_2 = new_first + new_second
+                                            print(new_v_1, new_v_2)
+                                            dekart_graph.add_e_oriented(new_v_1, new_v_2, '', 11)
+
 
         print('dekart')
-        for list in dekart_matrix:
+        for list in dekart_graph.matrix:
             print(list)
 
-        return dekart_edges
+        return dekart_graph.e_list
 
 
 
-    def find_next_v(self, vertex):
-        for e in vertex.edges:
-            if e.vertex1 == vertex:
-                return e.vertex2
+    def find_next_v(self, graph, vertex):
+        for v in graph.v_list:
+            if v.sign == vertex:
+                for e in v.edges:
+                    if e.vertex1 == v:
+                        return e.vertex2
