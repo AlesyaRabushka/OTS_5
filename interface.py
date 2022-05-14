@@ -379,4 +379,24 @@ class MainScreen(MDScreen):
                     self.ids.matrix.text = string
                     break
 
+    def show_multi_e(self):
+        for g in self.graphs:
+            if g.name == self.ids.graph_name.text:
+                multi_e = g.search_multiple_e()
+                if len(multi_e) == 0:
+                    self.ids.matrix.text = 'No multiple edges have been found'
+                else:
+                    multi_edges = ''
+                    for e in multi_e:
+                        print(e.sign)
+                        if e.type == 1:
+                            e_type = ' -> '
+                        elif e.type == 2:
+                            e_type = ' = '
+                        multi_edges += e.vertex1.sign + e_type + e.vertex2.sign + '\n'
+
+                    self.ids.matrix.text = 'Multiple edges:\n' + multi_edges
+
+
+
 Builder.load_file(os.path.join(os.path.dirname(__file__), "graph.kv"))

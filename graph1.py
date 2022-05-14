@@ -476,41 +476,25 @@ class Graph:
                 return e
         return None
 
-    def add_multiple_e(self, vertex1, vertex2):
-        self.e_amount += 2
-
-
+    def search_multiple_e(self):
         # NOT SURE if we shoul add new vertexes
         # v1, v2 = None, None
-        v1 = self.find_vertex(vertex1)
-        v2 = self.find_vertex(vertex2)
+        multi_edges = []
+        for e in self.e_list:
+            v1 = e.vertex1
+            v2 = e.vertex2
+            print('for ', v1.sign, v2.sign, end='')
 
-        sign1 = 'e' + str(self.e_amount)
-        e1 = Edge(self, v1, v2, 3, sign1)
-        self.e_list.append(e1)
-
-        sign2 = 'e' + str(self.e_amount)
-        e2 = Edge(self, v1, v2, 3, sign2)
-        self.e_list.append(e2)
-
-        # add EDGE to the matrix
-        for count, list in enumerate(self.matrix):
-            if v1.index == count:
-                for i in range(0, len(list)):
-                    if i == v2.index:
-                        list[i] += 1
-                        v1.degree.append(v2)
-                        v1.edges.append(e1)
-                        v2.degree.append(v1)
-                        v2.edges.append(e1)
-
-        for count, list in enumerate(self.matrix):
-            if v1.index == count:
-                for i in range(0, len(list)):
-                    if i == v2.index:
-                        list[i] += 1
-                        v1.edges.append(e2)
-                        v2.edges.append(e2)
+            for e2 in self.e_list:
+                    if (e2.vertex1 == v1 and e2.vertex2 == v2) or (e2.vertex1 == v2 and e2.vertex2 == v1):
+                        if e2 != e:
+                            if e2 not in multi_edges:
+                                print('found ', e2.vertex1.sign, e2.vertex2.sign)
+                                multi_edges.append(e2)
+        if len(multi_edges) >= 2:
+            return multi_edges
+        else:
+            return []
 
 
     def dfs_min_path(self, v0, prev_vertex, edges, not_visited_edges, count, path):

@@ -122,16 +122,20 @@
             cols: 2
             GridLayout:
                 rows:5
+                GridLayout:
+                    cols:2
+                    Button:
+                        text: 'print graph information'
+                        on_press: root.print_graph_info()
 
+                    Button:
+                        text: 'print hamilton cycles'
+                        on_press: root.print_hamilton_cycles()
                 Button:
-                    text: 'print graph information'
-                    on_press: root.print_graph_info()
-
+                    text: 'show multiple edges'
+                    on_press: root.show_multi_e()
                 Button:
-                    text: 'print hamilton cycles'
-                    on_press: root.print_hamilton_cycles()
-                Button:
-                    text: 'make connected'
+                    text: 'make graph connected'
                     on_press: root.make_connected()
                 GridLayout:
                     cols:2
