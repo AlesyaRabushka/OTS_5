@@ -259,7 +259,6 @@ class Graph:
             self.matrix.append(new_list)
 
     def remove_v(self, vertex):
-
         for v in self.v_list:
             if v.sign == vertex:
                 del_v = v
@@ -358,6 +357,7 @@ class Graph:
 
 
     def add_e_not_oriented(self, vertex1, vertex2, name):
+        v1, v2 = None, None
         for v in self.v_list:
             if v.sign == vertex1:
                 # self.add_e_oriented(vertex1, vertex2, name, 2)

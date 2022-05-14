@@ -130,6 +130,7 @@ class MainScreen(MDScreen):
                 if flag:
                     self.ids.matrix.text = 'The edge with the same name is already existed'
                 else:
+
                     if not g.add_e_not_oriented(vertex1, vertex2, name):
                         self.ids.matrix.text = 'The vertex does not exist'
                     else:
@@ -245,9 +246,8 @@ class MainScreen(MDScreen):
     def print_v_info(self, vertex):
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
-
-
                 flag = False
+                # for all vertexes
                 if vertex != '':
                     for v in g.v_list:
                         if flag:
@@ -263,9 +263,9 @@ class MainScreen(MDScreen):
                                 if v.text != '':
                                     text = ' text: ' + str(v.text)
                                 flag = True
+
                                 self.ids.matrix.text = degrees + colors + text
-
-
+                # for one vertex
                 else:
                     vertexes_info = ''
                     for v in g.v_list:
@@ -280,8 +280,11 @@ class MainScreen(MDScreen):
                         vertex_info = degrees + colors + text
                         vertexes_info += vertex_info + '\n'
 
+                    if vertexes_info == '':
+                        self.ids.matrix.text = 'No vertexes have been found'
+                    else:
+                        self.ids.matrix.text = vertexes_info
 
-                    self.ids.matrix.text = vertexes_info
 
 
     def print_e_info(self):
@@ -293,11 +296,14 @@ class MainScreen(MDScreen):
                         e_type = ' -> '
                     elif e.type == 2:
                         e_type = ' = '
-                    edge = e.vertex1.sign + e_type + e.vertex2.sign
+                    edge = e.sign + ' : ' + e.vertex1.sign + e_type + e.vertex2.sign
                     if e.color != '':
                         edge += ' color: ' + e.color
                     edges += edge + '\n'
-        self.ids.matrix.text = edges
+        if edges == '':
+            self.ids.matrix.text = 'No edges have been found'
+        else:
+            self.ids.matrix.text = edges
 
 
     def change_graph(self, new_graph_name):
@@ -349,6 +355,7 @@ class MainScreen(MDScreen):
 
 
     def dekart_mutiplication(self, graph):
+        graph1, graph2 = None, None
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
                 graph1 = g
@@ -379,6 +386,7 @@ class MainScreen(MDScreen):
                     self.ids.matrix.text = string
                     break
 
+    # multiple edges
     def show_multi_e(self):
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
