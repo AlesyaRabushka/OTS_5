@@ -284,6 +284,22 @@ class MainScreen(MDScreen):
                     self.ids.matrix.text = vertexes_info
 
 
+    def print_e_info(self):
+        for g in self.graphs:
+            if g.name == self.ids.graph_name.text:
+                edges = ''
+                for e in g.e_list:
+                    if e.type == 1:
+                        e_type = ' -> '
+                    elif e.type == 2:
+                        e_type = ' = '
+                    edge = e.vertex1.sign + e_type + e.vertex2.sign
+                    if e.color != '':
+                        edge += ' color: ' + e.color
+                    edges += edge + '\n'
+        self.ids.matrix.text = edges
+
+
     def change_graph(self, new_graph_name):
         flag = False
         for g in self.graphs:

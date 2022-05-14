@@ -133,9 +133,15 @@
                 Button:
                     text: 'make connected'
                     on_press: root.make_connected()
-                Button:
-                    text: 'vertexes info'
-                    on_press: root.print_v_info('')
+                GridLayout:
+                    cols:2
+
+                    Button:
+                        text: 'vertexes info'
+                        on_press: root.print_v_info('')
+                    Button:
+                        text: 'edges info'
+                        on_press: root.print_e_info()
 
                 Button:
                     text: 'center, radius, diametr'
