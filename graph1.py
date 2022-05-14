@@ -370,11 +370,16 @@ class Graph:
         if v1 == None or v2  == None:
             return False
         else:
-            e = Edge(self, v1, v2, 2, name)
+            self.e_amount += 1
+            if name == '' or name == ' ':
+                sign = 'e' + str(self.e_amount)
+            else:
+                sign = name
+            e = Edge(self, v1, v2, 2, sign)
 
             # print(e.vertex1.sign,'->',e.vertex2.sign)
             self.e_list.append(e)
-            self.e_amount += 1
+
 
             v1.degree.append(v2)
             v2.degree.append(v1)
