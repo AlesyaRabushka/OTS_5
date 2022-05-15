@@ -429,11 +429,13 @@ class MainScreen(MDScreen):
 
     # multiple edges
     def show_multi_e(self):
+        print('Multiple edges: ', end='')
         for g in self.graphs:
             if g.name == self.ids.graph_name.text:
                 multi_e = g.search_multiple_e()
                 if len(multi_e) == 0:
                     self.ids.matrix.text = 'No multiple edges have been found'
+                    print(' no multiple edges')
                 else:
                     multi_edges = ''
                     for e in multi_e:
@@ -445,8 +447,11 @@ class MainScreen(MDScreen):
                         multi_edges += e.vertex1.sign + e_type + e.vertex2.sign + '\n'
 
                     self.ids.matrix.text = 'Multiple edges:\n' + multi_edges
+                    print( multi_edges)
 
     def save(self):
+        print('Save in XML')
         self.file_system.record(self.graphs)
+        self.ids.matrix.text = 'Graph is successfully saved'
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "graph.kv"))

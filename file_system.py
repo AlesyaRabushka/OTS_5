@@ -18,23 +18,75 @@ class FileSystem:
             graph_name = doc.createElement('name')
             graph_name.appendChild(doc.createTextNode(item.name))
 
-            matrix = doc.createElement('matrix')
-            matrix.appendChild(doc.createTextNode(str(item.matrix)))
+            v_amount = doc.createElement('vertexes_amount')
+            v_amount.appendChild(doc.createTextNode(str(len(item.v_list))))
 
-            # birth_date = doc.createElement('birth_date')
-            # birth_date.appendChild(doc.createTextNode(str(item['birth_date'])))
-            #
-            # last_appointment = doc.createElement('last_appointment_date')
-            # last_appointment.appendChild(doc.createTextNode(str(item['last_appointment_date'])))
-            #
-            # vet_name = doc.createElement('vet_name')
-            # vet_name.appendChild(doc.createTextNode(item['vet_name']))
-            #
-            # disease = doc.createElement('disease')
-            # disease.appendChild(doc.createTextNode(item['disease']))
-            #
-            # handler = doc.createElement('handler_name')
-            # handler.appendChild(doc.createTextNode(item['handler_name']))
+
+            str_matrix = ''
+            for list in item.matrix:
+                for i in list:
+                    str_matrix += str(i)
+            matrix = doc.createElement('matrix')
+            matrix.appendChild(doc.createTextNode(str_matrix))
+
+            new = []
+            for i in str_matrix:
+                new.append(int(i))
+            print(new)
+
+
+            v_list = ''
+            for v in item.v_list:
+                v_list += v.sign + ' '
+            vertexes = doc.createElement('vertexes')
+            vertexes.appendChild(doc.createTextNode(str(v_list)))
+
+
+            v_colors = ''
+            for v in item.v_list:
+                if v.color != '':
+                    v_colors += v.sign + '_' + v.color + ' '
+            if v_colors == '':
+                v_colors = '-'
+            vertexes_colors = doc.createElement('vertexes_colors')
+            vertexes_colors.appendChild(doc.createTextNode(str(v_colors)))
+
+            v_text = ''
+            for v in item.v_list:
+                if v.text != '':
+                    v_text += v.sign + '_' + v.text + ' '
+            if v_text == '':
+                v_text = '-'
+            vertexes_text = doc.createElement('vertexes_text')
+            vertexes_text.appendChild(doc.createTextNode(str(v_text)))
+
+            o_e = ''
+            n_e = ''
+            for e in item.e_list:
+                if e.type == 1:
+                    o_e += e.sign + ':' + e.vertex1.sign + '_' + e.vertex2.sign + ' '
+                elif e.type == 2:
+                    n_e += e.sign + ':' + e.vertex1.sign + '_' + e.vertex2.sign + ' '
+            if o_e == '':
+                o_e = '-'
+            if n_e == '':
+                n_e = '-'
+
+            o_edges = doc.createElement('oriented_edges')
+            o_edges.appendChild(doc.createTextNode(o_e))
+
+            n_edges = doc.createElement('not_oriented_edges')
+            n_edges.appendChild(doc.createTextNode(n_e))
+
+            e_colors = ''
+            for e in item.e_list:
+                if e.color != '':
+                    e_colors += e.sign + '_' + e.color + ' '
+            if e_colors == '':
+                e_colors = '-'
+            edges_colors = doc.createElement('edges_colors')
+            edges_colors.appendChild(doc.createTextNode(str(e_colors)))
+
             #
             # phone = doc.createElement('phone_number')
             # phone.appendChild(doc.createTextNode(item['phone_number']))
@@ -46,13 +98,15 @@ class FileSystem:
             # address.appendChild(doc.createTextNode(item['handler_address']))
 
             graphs.appendChild(graph_name)
-            graphs.appendChild(matrix)
-            # pet.appendChild(birth_date)
-            # pet.appendChild(last_appointment)
-            # pet.appendChild(vet_name)
-            # pet.appendChild(disease)
-            # pet.appendChild(handler)
-            # pet.appendChild(phone)
+            graphs.appendChild(v_amount)
+            #graphs.appendChild(matrix)
+            graphs.appendChild(vertexes)
+            graphs.appendChild(vertexes_colors)
+            graphs.appendChild(vertexes_text)
+            graphs.appendChild(o_edges)
+            graphs.appendChild(n_edges)
+            graphs.appendChild(edges_colors)
+
             # pet.appendChild(mail)
             # pet.appendChild(address)
 
