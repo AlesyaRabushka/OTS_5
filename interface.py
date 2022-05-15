@@ -568,13 +568,38 @@ class MainScreen(MDScreen):
                                 flag_c = True
                             if i == ' ':
                                 g.set_v_color(vertex_name, color)
+                                vertex_name = ''
+                                color = ''
+                                flag_c = False
+                                flag_v = False
                             if not flag_v:
                                 vertex_name += i
                             if i != '_' and flag_c:
                                 color += i
 
-
-
+                    # create VERTEX TEXT
+                    vertex_name = ''
+                    text = ''
+                    flag_t = False
+                    flag_v = False
+                    for i in graph['vertexes_text']:
+                        if i == '-':
+                            break
+                        else:
+                            if i == '_':
+                                flag_v = True
+                                flag_t = True
+                            if i == ' ':
+                                self.set_v_text(vertex_name, text)
+                                print(vertex_name, text)
+                                vertex_name = ''
+                                text = ''
+                                flag_t = False
+                                flag_v = False
+                            if not flag_v:
+                                vertex_name += i
+                            if i != '_' and flag_t:
+                                text += i
 
 
 
