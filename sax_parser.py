@@ -267,3 +267,4 @@ class FileReadingSysytem(xml.sax.ContentHandler):
 
     def return_graphs_list(self):
         return self.graphs_list
+

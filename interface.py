@@ -12,6 +12,8 @@ class MainScreen(MDScreen):
         super().__init__()
         self.file_recording_system = FileRecordingSystem()
         self.file_reading_system = FileReadingSysytem()
+        # graphs from XML
+        self.file_graphs = {}
 
         self.graphs = []
         self.count = 0
@@ -33,6 +35,8 @@ class MainScreen(MDScreen):
 
         self.vertex_text = ''
 
+        # upload graphs from XML into the system
+        self.upload_graphs()
 
     def add_graph(self, name):
         flag = False
@@ -458,8 +462,9 @@ class MainScreen(MDScreen):
         self.file_recording_system.record(self.graphs)
         self.ids.matrix.text = 'Graph is successfully saved'
 
-        self.read()
 
+
+    # read from XML
     def read(self):
         parser = xml.sax.make_parser()  # creating an XMLReader
         parser.setFeature(xml.sax.handler.feature_namespaces, 0)  # turning off namespaces
@@ -468,5 +473,63 @@ class MainScreen(MDScreen):
         parser.setContentHandler(self.file_reading_system)  # overriding default ContextHandler
         parser.parse('graphs.xml')
         print(self.file_reading_system.return_graphs_list())
+        return self.file_reading_system.return_graphs_list()
+
+    # upload graphs from on XML
+    def upload_graphs(self):
+        self.file_graphs = self.read()
+        for graph in self.file_graphs:
+            # create GRAPH
+            self.add_graph(graph['name'])
+
+            for g in self.graphs:
+                if g.name == graph['name']:
+                    # create VERTEXES
+                    vertex = None
+                    vertex_name = ''
+                    for i in graph['vertexes']:
+                        if i != ' ':
+                            vertex_name += i
+                        if i == ' ':
+                            g.add_v(vertex_name)
+                            vertex_name = ''
+
+                    # create ORIENTED EDGES
+                    edge_name = ''
+                    v1_name = ''
+                    v2_name = ''
+                    flag_e = False
+                    flag_v1 = False
+                    flag_v2 = False
+                    for i in graph['oriented_edges']:
+                        if i != ':' and not flag_e:
+                            edge_name += i
+                        if i == ':':
+                            flag_e = True
+                        if i == '_':
+                            flag_v1 = True
+                        if i != ':' and i != '_' and flag_e and not flag_v1:
+                            v1_name += i
+
+                        if i != '_' and i != ' ' and flag_e and flag_v1:
+                            v2_name += i
+                        if i == ' ':
+                            print(self.ids.graph_name.text)
+                            g.add_e_oriented(v1_name, v2_name, edge_name, 1)
+                            print(v1_name, v2_name, edge_name)
+                            edge_name = ''
+                            v1_name = ''
+                            v2_name = ''
+                            flag_e = False
+                            flag_v1 = False
+                            flag_v2 = False
+
+
+
+
+
+
+
+
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "graph.kv"))
