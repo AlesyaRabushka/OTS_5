@@ -7,7 +7,7 @@
             rows: 2
 
             GridLayout:
-                cols:5
+                cols:6
 
                 Label:
                     background_normal:''
@@ -23,6 +23,9 @@
                 Button:
                     text: 'add graph'
                     on_press: root.add_graph(root.return_change_g_name())
+                Button:
+                    text: 'save graph'
+                    on_press: root.save()
                 Button:
                     text: 'switch graph'
                     on_press: root.change_graph(root.return_change_g_name())

@@ -3,9 +3,12 @@ import os
 from kivy.lang import Builder
 from graph1 import Graph, Vertex, Edge
 
+from file_system import FileSystem
+
 class MainScreen(MDScreen):
     def __init__(self):
         super().__init__()
+        self.file_system = FileSystem()
         self.graphs = []
         self.count = 0
 
@@ -443,6 +446,7 @@ class MainScreen(MDScreen):
 
                     self.ids.matrix.text = 'Multiple edges:\n' + multi_edges
 
-
+    def save(self):
+        self.file_system.record(self.graphs)
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "graph.kv"))
