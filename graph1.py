@@ -263,13 +263,22 @@ class Graph:
             if v.sign == vertex:
                 del_v = v
                 # remove all EDGES
-                if len(v.degree) != 0:
-                    for other_v in v.degree:
-                        if v in other_v.degree:
-                            other_v.degree.remove(v)
-                            e = self.search_e(v, other_v)
-                            if e != None:
-                                other_v.edges.remove(e)
+                for e in self.e_list:
+                    if e.vertex1 == v:
+                        self.remove_e(e.sign)
+                    elif e.vertex2 == v:
+                        self.remove_e(e.sign)
+                # if len(v.degree) != 0:
+                #     for other_v in v.degree:
+                #         if v in other_v.degree:
+                #             other_v.degree.remove(v)
+                #             e = self.search_e(v, other_v)
+                #             if e != None:
+                #                 other_v.edges.remove(e)
+                #             e = self.search_e(other_v, v)
+                #             if e != None:
+                #                 other_v.edges.remove(e)
+                #             self.remove_e(e.sign)
 
         for count, list in enumerate(self.matrix):
             list.pop(del_v.index)
