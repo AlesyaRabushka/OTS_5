@@ -502,27 +502,57 @@ class MainScreen(MDScreen):
                     flag_v1 = False
                     flag_v2 = False
                     for i in graph['oriented_edges']:
-                        if i != ':' and not flag_e:
-                            edge_name += i
-                        if i == ':':
-                            flag_e = True
-                        if i == '_':
-                            flag_v1 = True
-                        if i != ':' and i != '_' and flag_e and not flag_v1:
-                            v1_name += i
+                        if i == '-':
+                            break
+                        else:
+                            if i != ':' and not flag_e:
+                                edge_name += i
+                            if i == ':':
+                                flag_e = True
+                            if i == '_':
+                                flag_v1 = True
+                            if i != ':' and i != '_' and flag_e and not flag_v1:
+                                v1_name += i
 
-                        if i != '_' and i != ' ' and flag_e and flag_v1:
-                            v2_name += i
-                        if i == ' ':
-                            print(self.ids.graph_name.text)
-                            g.add_e_oriented(v1_name, v2_name, edge_name, 1)
-                            print(v1_name, v2_name, edge_name)
-                            edge_name = ''
-                            v1_name = ''
-                            v2_name = ''
-                            flag_e = False
-                            flag_v1 = False
-                            flag_v2 = False
+                            if i != '_' and i != ' ' and flag_e and flag_v1:
+                                v2_name += i
+                            if i == ' ':
+                                print(self.ids.graph_name.text)
+                                g.add_e_oriented(v1_name, v2_name, edge_name, 1)
+                                print(v1_name, v2_name, edge_name)
+                                edge_name = ''
+                                v1_name = ''
+                                v2_name = ''
+                                flag_e = False
+                                flag_v1 = False
+                                flag_v2 = False
+
+                    # create NOT ORIENTED EDGES
+                    for i in graph['not_oriented_edges']:
+                        if i == '-':
+                            break
+                        else:
+                            if i != ':' and not flag_e:
+                                edge_name += i
+                            if i == ':':
+                                flag_e = True
+                            if i == '_':
+                                flag_v1 = True
+                            if i != ':' and i != '_' and flag_e and not flag_v1:
+                                v1_name += i
+
+                            if i != '_' and i != ' ' and flag_e and flag_v1:
+                                v2_name += i
+                            if i == ' ':
+                                print(self.ids.graph_name.text)
+                                g.add_e_not_oriented(v1_name, v2_name, edge_name)
+                                print(v1_name, v2_name, edge_name)
+                                edge_name = ''
+                                v1_name = ''
+                                v2_name = ''
+                                flag_e = False
+                                flag_v1 = False
+                                flag_v2 = False
 
 
 

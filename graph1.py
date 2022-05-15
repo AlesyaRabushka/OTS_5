@@ -301,7 +301,7 @@ class Graph:
 
         v1 = self.find_vertex(vertex1)
         v2 = self.find_vertex(vertex2)
-        print(vertex2 + str(0))
+
 
         if v1 == None or v2 == None:
             return False
