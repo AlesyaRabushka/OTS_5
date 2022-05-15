@@ -28,7 +28,7 @@
                     on_press: root.change_graph(root.return_change_g_name())
                 Button:
                     text: 'delete graph'
-                    on_press: root.delete_graph()
+                    on_press: root.delete_graph(root.return_change_g_name())
                 TextInput:
                     hint_text:  'graph name'
                     on_text: root.change_g_name(self.text)
@@ -38,6 +38,10 @@
                 Button:
                     text: 'dekart multiplication'
                     on_press: root.dekart_mutiplication(root.return_change_g_name())
+
+                Button:
+                    text: 'vektor multiplication'
+                    on_press: root.vektor_mutiplication(root.return_change_g_name())
 
         GridLayout:
             cols: 5

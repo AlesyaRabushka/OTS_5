@@ -879,6 +879,52 @@ class Graph:
 
         return dekart_graph.e_list
 
+    def vector_multiplication(self, graph, dekart_graph):
+
+        for v1 in graph.v_list:
+            for v2 in self.v_list:
+                new_v = v1.sign + v2.sign
+                dekart_graph.add_v(new_v)
+        for i in dekart_graph.v_list:
+            print(i.sign)
+
+        print(dekart_graph.v_amount)
+
+        print('dekart')
+        for list in dekart_graph.matrix:
+            print(list)
+
+        for index, pare in enumerate(dekart_graph.v_list):
+
+            first = pare.sign[0] + pare.sign[1]
+            second = pare.sign[2] + pare.sign[3]
+            print(first, second)
+            v1_next = self.find_next_v(self, first)
+            v2_next = self.find_next_v(graph, second)
+            if v1_next != None and v2_next != None:
+                for new_index, new_pare in enumerate(dekart_graph.v_list):
+                    new_first = new_pare.sign[0] + new_pare.sign[1]
+                    new_second = new_pare.sign[2] + new_pare.sign[3]
+                    if new_first != None and new_second != None:
+                        if new_first == v1_next.sign and new_second == v2_next.sign:
+                            print('find for', first, second,'-', new_first, new_second)
+                            for m_index, list in enumerate(dekart_graph.matrix):
+                                if m_index == index:
+                                    for i in range(len(list)):
+                                        if i == new_index:
+                                            #list[i] += 1
+                                            new_v_1 = first + second
+                                            new_v_2 = new_first + new_second
+                                            print(new_v_1, new_v_2)
+                                            dekart_graph.add_e_oriented(new_v_1, new_v_2, '', 11)
+
+
+        print('dekart')
+        for list in dekart_graph.matrix:
+            print(list)
+
+        return dekart_graph.e_list
+
 
 
     def find_next_v(self, graph, vertex):

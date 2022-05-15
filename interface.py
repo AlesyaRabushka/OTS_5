@@ -45,15 +45,21 @@ class MainScreen(MDScreen):
             self.graphs.append(g)
             self.ids.graph_name.text = g.name
 
-    def delete_graph(self):
+    def delete_graph(self, name):
         flag = False
         for g in self.graphs:
-            if g.name == self.ids.graph_name.text:
+            if g.name == name:
                 self.graphs.remove(g)
                 flag = True
 
         if not flag:
             self.ids.matrix.text = 'No graph has been found'
+        if flag:
+            self.ids.matrix.text = 'Graph has been successfully removed'
+            if len(self.graphs) != 0:
+                self.ids.graph_name.text = self.graphs[0].name
+            else:
+                self.ids.graph_name.text = ''
 
     def add_v(self, name):
         if len(self.graphs) == 0:
@@ -380,6 +386,38 @@ class MainScreen(MDScreen):
                     dekart_edges = graph1.dekart_multiplication(graph2, dekart_graph)
                     string = ''
                     string += 'Dekart multiplication\n'
+                    for e in dekart_graph.e_list:
+                        string += e.vertex1.sign + '->' + e.vertex2.sign + '\n'
+
+                    self.ids.matrix.text = string
+                    break
+
+    def vektor_mutiplication(self, graph):
+        graph1, graph2 = None, None
+        for g in self.graphs:
+            if g.name == self.ids.graph_name.text:
+                graph1 = g
+                break
+
+        for g2 in self.graphs:
+            if g2.name == graph:
+                graph2 = g2
+                break
+
+        if graph1 == None or graph2 == None:
+            self.ids.matrix.text = 'No graph has been found'
+        else:
+            new_name = graph1.name + graph2.name
+            self.add_graph(new_name)
+            print('added new graph ', new_name)
+            for dekart_graph in self.graphs:
+                if dekart_graph.name == new_name:
+                    dekart_graph.type = 1
+                    dekart_edges = []
+                    print('start dekart')
+                    dekart_edges = graph1.dekart_multiplication(graph2, dekart_graph)
+                    string = ''
+                    string += 'Vector multiplication\n'
                     for e in dekart_graph.e_list:
                         string += e.vertex1.sign + '->' + e.vertex2.sign + '\n'
 
