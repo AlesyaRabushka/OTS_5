@@ -1,7 +1,7 @@
 import xml.dom.minidom as md
 
 
-class FileSystem:
+class FileRecordingSystem:
     def __init__(self):
         pass
 
@@ -115,3 +115,6 @@ class FileSystem:
         file = open('graphs.xml', 'w')
         doc.writexml(file, encoding='windows-1251')
         file.close()
+
+    def read(self):
+        pass

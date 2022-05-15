@@ -3,12 +3,16 @@ import os
 from kivy.lang import Builder
 from graph1 import Graph, Vertex, Edge
 
-from file_system import FileSystem
+from file_system import FileRecordingSystem
+from sax_parser import FileReadingSysytem
+import xml.sax
 
 class MainScreen(MDScreen):
     def __init__(self):
         super().__init__()
-        self.file_system = FileSystem()
+        self.file_recording_system = FileRecordingSystem()
+        self.file_reading_system = FileReadingSysytem()
+
         self.graphs = []
         self.count = 0
 
@@ -451,7 +455,18 @@ class MainScreen(MDScreen):
 
     def save(self):
         print('Save in XML')
-        self.file_system.record(self.graphs)
+        self.file_recording_system.record(self.graphs)
         self.ids.matrix.text = 'Graph is successfully saved'
+
+        self.read()
+
+    def read(self):
+        parser = xml.sax.make_parser()  # creating an XMLReader
+        parser.setFeature(xml.sax.handler.feature_namespaces, 0)  # turning off namespaces
+
+
+        parser.setContentHandler(self.file_reading_system)  # overriding default ContextHandler
+        parser.parse('graphs.xml')
+        print(self.file_reading_system.return_graphs_list())
 
 Builder.load_file(os.path.join(os.path.dirname(__file__), "graph.kv"))
