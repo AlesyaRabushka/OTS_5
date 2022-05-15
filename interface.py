@@ -488,11 +488,14 @@ class MainScreen(MDScreen):
                     vertex = None
                     vertex_name = ''
                     for i in graph['vertexes']:
-                        if i != ' ':
-                            vertex_name += i
-                        if i == ' ':
-                            g.add_v(vertex_name)
-                            vertex_name = ''
+                        if i == '-':
+                            break
+                        else:
+                            if i != ' ':
+                                vertex_name += i
+                            if i == ' ':
+                                g.add_v(vertex_name)
+                                vertex_name = ''
 
                     # create ORIENTED EDGES
                     edge_name = ''
@@ -574,6 +577,29 @@ class MainScreen(MDScreen):
                                 flag_v = False
                             if not flag_v:
                                 vertex_name += i
+                            if i != '_' and flag_c:
+                                color += i
+
+                    # create EDGES COLORS
+                    edge_name = ''
+                    color = ''
+                    flag_c = False
+                    flag_v = False
+                    for i in graph['edges_colors']:
+                        if i == '-':
+                            break
+                        else:
+                            if i == '_':
+                                flag_v = True
+                                flag_c = True
+                            if i == ' ':
+                                g.set_e_color(edge_name, color)
+                                edge_name = ''
+                                color = ''
+                                flag_c = False
+                                flag_v = False
+                            if not flag_v:
+                                edge_name += i
                             if i != '_' and flag_c:
                                 color += i
 

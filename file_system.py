@@ -24,6 +24,8 @@ class FileRecordingSystem:
             v_list = ''
             for v in item.v_list:
                 v_list += v.sign + ' '
+            if v_list == '':
+                v_list = '-'
             vertexes = doc.createElement('vertexes')
             vertexes.appendChild(doc.createTextNode(str(v_list)))
 
