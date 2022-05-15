@@ -5,7 +5,7 @@ class FileReadingSysytem(xml.sax.ContentHandler):
     def __init__(self):
         self.graph_name = False
         self.vertexes = False
-        self.vertexes_color = False
+        self.vertexes_colors = False
         self.vertexes_text = False
         self.oriented_edges = False
         self.not_oriented_edges = False
@@ -39,7 +39,7 @@ class FileReadingSysytem(xml.sax.ContentHandler):
             self.graph_name_line = False
             self.vertexes_line = False
             self.vertexes_text_line = False
-            self.vertexes_color_line = False
+            self.vertexes_colors_line = False
             self.edges_colors_line = False
             self.oriented_edges_line = False
             self.not_oriented_edges_line = False
@@ -50,7 +50,7 @@ class FileReadingSysytem(xml.sax.ContentHandler):
 
             # self.name_line_count = 0
             # self.vertexes_line_count = 0
-            # self.vertexes_color_line_count = 0
+            # self.vertexes_colors_line_count = 0
             # self.vertexes_text_line_count = 0
             # self.oriented_edges_line_count = 0
             # self.not_oriented_edges_line_count = 0
@@ -68,7 +68,7 @@ class FileReadingSysytem(xml.sax.ContentHandler):
 
             self.close_graph_name = False
             self.close_vertexes = False
-            self.close_vertexes_color = False
+            self.close_vertexes_colors = False
             self.close_vertexes_text = False
             self.close_oriented_edges = False
             self.close_not_oriented_edges = False
@@ -89,10 +89,10 @@ class FileReadingSysytem(xml.sax.ContentHandler):
             self.line += 1
             #self.vertexes_line_count = self.line
 
-        elif self.current_data == 'vertexes_color':
-            self.vertexes_color = True
+        elif self.current_data == 'vertexes_colors':
+            self.vertexes_colors = True
             self.line += 1
-            #self.vertexes_color_line_count = self.line
+            #self.vertexes_colors_line_count = self.line
 
         elif self.current_data == 'vertexes_text':
             self.vertexes_text = True
@@ -140,10 +140,10 @@ class FileReadingSysytem(xml.sax.ContentHandler):
             if self.vertexes_line == True:
                 self.vertexes_line = False
                 self.close_vertexes = True
-        elif tag == 'vertexes_color':
-            if self.vertexes_color_line == True:
-                self.vertexes_color_line = False
-                self.close_vertexes_color = True
+        elif tag == 'vertexes_colors':
+            if self.vertexes_colors_line == True:
+                self.vertexes_colors_line = False
+                self.close_vertexes_colors = True
         elif tag == 'vertexes_text':
             if self.vertexes_text_line == True:
                 self.vertexes_text_line = False
@@ -201,13 +201,11 @@ class FileReadingSysytem(xml.sax.ContentHandler):
             self.vertexes = False
             self.vertexes_line = True
 
-        elif self.vertexes_color:
-            self.vertexes_color_line = True
+        elif self.vertexes_colors:
+            self.vertexes_colors_line = True
             self.count += 1
-            self.graph['vertexes_color'] = content
-
-
-            self.vertexes_color = False
+            self.graph['vertexes_colors'] = content
+            self.vertexes_colors = False
 
 
         elif self.vertexes_text:

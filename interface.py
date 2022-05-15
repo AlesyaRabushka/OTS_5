@@ -554,6 +554,27 @@ class MainScreen(MDScreen):
                                 flag_v1 = False
                                 flag_v2 = False
 
+                    # create VERTEXES COLORS
+                    vertex_name = ''
+                    color = ''
+                    flag_c = False
+                    flag_v = False
+                    for i in graph['vertexes_colors']:
+                        if i == '-':
+                            break
+                        else:
+                            if i == '_':
+                                flag_v = True
+                                flag_c = True
+                            if i == ' ':
+                                g.set_v_color(vertex_name, color)
+                            if not flag_v:
+                                vertex_name += i
+                            if i != '_' and flag_c:
+                                color += i
+
+
+
 
 
 

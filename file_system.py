@@ -21,20 +21,6 @@ class FileRecordingSystem:
             v_amount = doc.createElement('vertexes_amount')
             v_amount.appendChild(doc.createTextNode(str(len(item.v_list))))
 
-
-            str_matrix = ''
-            for list in item.matrix:
-                for i in list:
-                    str_matrix += str(i)
-            matrix = doc.createElement('matrix')
-            matrix.appendChild(doc.createTextNode(str_matrix))
-
-            new = []
-            for i in str_matrix:
-                new.append(int(i))
-            print(new)
-
-
             v_list = ''
             for v in item.v_list:
                 v_list += v.sign + ' '
