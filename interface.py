@@ -35,8 +35,9 @@ class MainScreen(MDScreen):
 
         self.vertex_text = ''
 
+        # //////////////////////////////////////////////////////
         # upload graphs from XML into the system
-        #self.upload_graphs()
+        self.upload_graphs()
 
     def add_graph(self, name):
         flag = False
