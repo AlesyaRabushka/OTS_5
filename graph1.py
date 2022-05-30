@@ -853,8 +853,6 @@ class Graph:
             print(i.sign)
 
         print(dekart_graph.v_amount)
-
-        print('dekart')
         for list in dekart_graph.matrix:
             print(list)
 
